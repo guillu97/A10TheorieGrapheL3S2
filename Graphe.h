@@ -12,7 +12,7 @@
 #include <limits>
 #include <cmath>
 
-#include "Arete.h"
+
 
 
 class Graphe {

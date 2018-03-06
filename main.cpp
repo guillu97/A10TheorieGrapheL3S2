@@ -6,7 +6,6 @@ int main()
 {
     int niveau;
     bool toExit = true;
-    cout << "Hello world!" << endl;
     cout << "Projet de Theorie des Graphes" << endl << endl;
 
     do{

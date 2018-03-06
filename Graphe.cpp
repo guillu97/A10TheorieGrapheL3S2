@@ -19,7 +19,7 @@ Graphe::Graphe() {
 
 void Graphe::importGraphe(string fileName) {
 
-    ifstream file(fileName, ios::in);  // on ouvre le fichier en lecture, le fichier est dans le même dossier que l'executable
+    ifstream file(fileName.c_str(), ios::in);  // on ouvre le fichier en lecture, le fichier est dans le même dossier que l'executable
 
 
     if(file)  // si l'ouverture a réussi

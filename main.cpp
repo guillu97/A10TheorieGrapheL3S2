@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include "Graphe.h"
 
 
 using namespace std;
@@ -9,6 +10,9 @@ int main()
     int niveau;
     bool toExit = true;
     cout << "Projet de Theorie des Graphes" << endl << endl;
+
+    Graphe graphe;
+    string fileName;
 
     do{
         cout <<"Choose your level :"<<endl;
@@ -22,7 +26,13 @@ int main()
             break;
         }
         case 1:{
+
+
             cout << "Hello" << endl;
+            cout << "Entrer un nom de fichier avec son extension txt (ex: monTexte.txt)"<< endl;
+            cin >> fileName;
+            graphe.importGraphe(fileName);
+            graphe.displayGraphe();
             break;
             }
         default:{

@@ -11,9 +11,10 @@
 #include <vector>
 #include <limits>
 #include <cmath>
+#include <vector>
 
 
-
+#include "Etat.h"
 
 class Graphe {
 
@@ -21,14 +22,16 @@ private:
     std::string fileName;
     int nbSommet;
     int nbArc;
-    bool** matAdj;
-    double** matInc;
+    bool** matAdj = NULL;
+    double** matInc = NULL;
+    Etat* tabEtats[];
+
 
     //Arete* matAdj;
 
 
 public:
-    Graphe();
+    Graphe(std::string fileName);
     void importGraphe(std::string fileName);
     void displayGraphe();
 

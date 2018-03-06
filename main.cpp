@@ -11,8 +11,7 @@ int main()
     bool toExit = true;
     cout << "Projet de Theorie des Graphes" << endl << endl;
 
-    Graphe graphe;
-    string fileName;
+
 
     do{
         cout <<"Choose your level :"<<endl;
@@ -27,12 +26,15 @@ int main()
         }
         case 1:{
 
+            string fileName;
 
-            cout << "Hello" << endl;
+            cout << "Bonjour" << endl;
             cout << "Entrer un nom de fichier avec son extension txt (ex: monTexte.txt)"<< endl;
             cin >> fileName;
-            graphe.importGraphe(fileName);
+
+            Graphe graphe(fileName);
             graphe.displayGraphe();
+
             break;
             }
         default:{

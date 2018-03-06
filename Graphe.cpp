@@ -12,18 +12,24 @@
 
 using namespace std;
 
-Graphe::Graphe() {
+Graphe::Graphe(string fileName) {
+    this->fileName = fileName;
+    importGraphe(fileName);
+
+
+
 
 }
 
 
 void Graphe::importGraphe(string fileName) {
 
-    ifstream file(fileName.c_str(), ios::in);  // on ouvre le fichier en lecture, le fichier est dans le m√™me dossier que l'executable
+    ifstream file(fileName.c_str(), ios::in);  // on ouvre le fichier en lecture, le fichier est dans le mÍme dossier que l'executable
 
 
-    if(file)  // si l'ouverture a r√©ussi
+    if(file)  // si l'ouverture a rÈussi
     {
+
 
         // instructions
 
@@ -31,9 +37,23 @@ void Graphe::importGraphe(string fileName) {
         file >> this->nbArc;
 
 
-        // cr√©er tableau de bool√©en 2d   (matrice carr√©e de hauteur nb sommet)  toutes les cases sont initialis√©es √† false
+        // create a tabEtat with all the states, then we will add the successors
+        for(int i = 0; i<this->nbSommet; i++){
+            this->tabEtats[i] = new Etat(i);
+        }
+
+        //debug
+        cout <<endl;
+        cout << "Les etats presents: " <<endl;
+        for(int i = 0; i<this->nbSommet; i++ ){
+            cout << tabEtats[i]->getNom() << " ";
+        }
+        cout <<endl;
+        cout <<endl;
+
+        // crÈer tableau de boolÈen 2d   (matrice carrÈe de hauteur nb sommet)  toutes les cases sont initialisÈes ‡ false
         matAdj = new bool*[this->nbSommet];
-        for(unsigned int i = 0; i < this->nbSommet; i++)
+        for(int i = 0; i < this->nbSommet; i++)
         {
             matAdj[i] = new bool[this->nbSommet];
             for(int j = 0; j <this->nbSommet; j++){
@@ -41,9 +61,9 @@ void Graphe::importGraphe(string fileName) {
             }
         }
 
-        // cr√©er tableau de int 2d  (matrice carr√©e de hauteur nb sommet) toutes les cases sont initialis√©es √† 0
+        // crÈer tableau de int 2d  (matrice carrÈe de hauteur nb sommet) toutes les cases sont initialisÈes ‡ 0
         matInc = new double*[this->nbSommet];
-        for(unsigned int i = 0; i < this->nbSommet; i++)
+        for(int i = 0; i < this->nbSommet; i++)
         {
             matInc[i] = new double[this->nbSommet];
             for(int j = 0; j <this->nbSommet; j++){
@@ -54,8 +74,10 @@ void Graphe::importGraphe(string fileName) {
 
 
 
+
         // remplir matAdj et matInc
         int etatDebut, etatFin, poids;
+
         for(int i = 0; i < this->nbArc; i++){
 
             file >> etatDebut;
@@ -70,7 +92,30 @@ void Graphe::importGraphe(string fileName) {
 
             //remplir une case matInc avec son poids
             matInc[etatDebut][etatFin] = poids;
+
+
+            //we add the successor to the tabEtats
+            tabEtats[etatDebut]->ajoutSuccesseur(etatFin);
+
         }
+
+        //debug
+        cout << endl;
+        cout << endl;
+
+        cout << "Tous les etats et leurs successeurs: "<<endl;
+        for(int i = 0; i<this->nbSommet; i++){
+            //vector <Etat*> tempTabSuccesseurs = tabEtats[i]->getSuccesseurs();
+            cout << "Etat " << tabEtats[i]->getNom() << " :"<<endl;
+            cout<< "successeurs: [ ";
+            for(unsigned int j = 0; j<tabEtats[i]->getSuccesseurs().size(); j++){
+                cout << tabEtats[i]->getSuccesseurs()[j]->getNom() << " ";
+            }
+            cout <<"]"<<endl;
+        }
+
+        cout << endl;
+        cout << endl;
 
 
 
@@ -85,32 +130,44 @@ void Graphe::importGraphe(string fileName) {
 }
 
 void Graphe::displayGraphe() {
+    cout << endl;
     cout << "nb sommet: ";
     cout << this->nbSommet << endl;
+    cout << endl;
     cout << "nb arc: ";
     cout << this->nbArc << endl;
 
+    cout << endl;
 
     cout << "MatAdj: " << endl;
-    // display matAdj
-    for(int i = 0; i<this->nbSommet; i++){
-        for(int j = 0; j<this->nbSommet; j++){
-            cout << matAdj[i][j] << " ";
+
+    if(matAdj != NULL){
+        // display matAdj
+        for(int i = 0; i<this->nbSommet; i++){
+            for(int j = 0; j<this->nbSommet; j++){
+                cout << matAdj[i][j] << " ";
+            }
+            cout << endl;
         }
-        cout << endl;
-    }
+    }else
+        cout << "matAdj est vide" <<endl;
+
+    cout << endl;
 
     cout << "MatInc: " << endl;
-    // display matInc
-    for(int i = 0; i<this->nbSommet; i++){
-        for(int j = 0; j<this->nbSommet; j++){
-            if(isnan(matInc[i][j])){
-                cout << "/" << " ";
-            }else
-                cout << matInc[i][j] << " ";
+    if(matInc != NULL){
+        // display matInc
+        for(int i = 0; i<this->nbSommet; i++){
+            for(int j = 0; j<this->nbSommet; j++){
+                if(isnan(matInc[i][j])){
+                    cout << "/" << " ";
+                }else
+                    cout << matInc[i][j] << " ";
+            }
+            cout << endl;
         }
-        cout << endl;
-    }
+    }else
+        cout << "matInc est vide" <<endl;
 
     cout << endl;
 

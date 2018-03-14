@@ -24,7 +24,8 @@ private:
     bool** matAdj = NULL;
     double** matInc = NULL;
 
-    bool hasBeenImported = false;
+
+    bool hasBeenImported;
     void importGraphe(std::string fileName);
 
     //Arete* matAdj;

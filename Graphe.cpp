@@ -14,9 +14,11 @@ using namespace std;
 
 Graphe::Graphe(string fileName) {
     this->fileName = fileName;
+    this->hasBeenImported = false;
     importGraphe(fileName);
 
 }
+
 
 
 void Graphe::importGraphe(string fileName) {
@@ -35,7 +37,7 @@ void Graphe::importGraphe(string fileName) {
 
         // créer tableau de booléen 2d   (matrice carrée de hauteur nb sommet)  toutes les cases sont initialisées à false
         matAdj = new bool*[this->nbSommet];
-        for(unsigned int i = 0; i < this->nbSommet; i++)
+        for(int i = 0; i < this->nbSommet; i++)
         {
             matAdj[i] = new bool[this->nbSommet];
             for(int j = 0; j <this->nbSommet; j++){
@@ -45,7 +47,7 @@ void Graphe::importGraphe(string fileName) {
 
         // créer tableau de int 2d  (matrice carrée de hauteur nb sommet) toutes les cases sont initialisées à 0
         matInc = new double*[this->nbSommet];
-        for(unsigned int i = 0; i < this->nbSommet; i++)
+        for(int i = 0; i < this->nbSommet; i++)
         {
             matInc[i] = new double[this->nbSommet];
             for(int j = 0; j <this->nbSommet; j++){

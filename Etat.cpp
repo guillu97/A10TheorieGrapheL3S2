@@ -3,8 +3,15 @@
 
 using namespace std;
 
+Etat::Etat(){
+    nom = -1;
+}
 Etat::Etat(int nom) {
     this->nom = nom;
+}
+
+Etat::Etat(Etat& a){
+    this->nom = a.nom;
 }
 
 

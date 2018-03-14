@@ -15,7 +15,7 @@
 
 
 #include "Etat.h"
-
+#include "Arc.h"
 class Graphe {
 
 private:

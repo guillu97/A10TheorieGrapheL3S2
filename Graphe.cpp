@@ -51,6 +51,15 @@ void Graphe::importGraphe(string fileName) {
         cout <<endl;
         cout <<endl;
 
+        //test arete
+        cout << "Un arc" << endl;
+        Arc test(*tabEtats[0],*tabEtats[1],9);
+        test.afficherArc();
+        cout << test.getExtremiteTerminale().getNom()<<endl;
+
+
+
+
         // créer tableau de booléen 2d   (matrice carrée de hauteur nb sommet)  toutes les cases sont initialisées à false
         matAdj = new bool*[this->nbSommet];
         for(int i = 0; i < this->nbSommet; i++)

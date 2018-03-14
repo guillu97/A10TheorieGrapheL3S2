@@ -26,9 +26,10 @@ private:
 
 
 
-
 public:
     Etat(int nom);
+    Etat(Etat& a);
+    Etat();
     void ajoutSuccesseur(int nom);
 
 

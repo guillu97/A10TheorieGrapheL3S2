@@ -21,8 +21,8 @@ private:
     std::string fileName;
     int nbSommet;
     int nbArc;
-    bool** matAdj = nullptr;
-    double** matInc = nullptr;
+    bool** matAdj = NULL;
+    double** matInc = NULL;
 
     bool hasBeenImported = false;
     void importGraphe(std::string fileName);

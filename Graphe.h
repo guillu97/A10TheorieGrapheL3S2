@@ -21,15 +21,18 @@ private:
     std::string fileName;
     int nbSommet;
     int nbArc;
-    bool** matAdj;
-    double** matInc;
+    bool** matAdj = nullptr;
+    double** matInc = nullptr;
+
+    bool hasBeenImported = false;
+    void importGraphe(std::string fileName);
 
     //Arete* matAdj;
 
 
 public:
-    Graphe();
-    void importGraphe(std::string fileName);
+    Graphe(std::string fileName);
+
     void displayGraphe();
 
 

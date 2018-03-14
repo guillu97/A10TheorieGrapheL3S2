@@ -12,7 +12,9 @@
 
 using namespace std;
 
-Graphe::Graphe() {
+Graphe::Graphe(string fileName) {
+    this->fileName = fileName;
+    importGraphe(fileName);
 
 }
 
@@ -72,6 +74,8 @@ void Graphe::importGraphe(string fileName) {
             matInc[etatDebut][etatFin] = poids;
         }
 
+        hasBeenImported = true;
+
 
 
 
@@ -85,34 +89,42 @@ void Graphe::importGraphe(string fileName) {
 }
 
 void Graphe::displayGraphe() {
-    cout << "nb sommet: ";
-    cout << this->nbSommet << endl;
-    cout << "nb arc: ";
-    cout << this->nbArc << endl;
+
+    if(hasBeenImported) {
+        cout << "nb sommet: ";
+        cout << this->nbSommet << endl;
+
+        cout << "nb arc: ";
+        cout << this->nbArc << endl;
 
 
-    cout << "MatAdj: " << endl;
-    // display matAdj
-    for(int i = 0; i<this->nbSommet; i++){
-        for(int j = 0; j<this->nbSommet; j++){
-            cout << matAdj[i][j] << " ";
+        cout << "MatAdj: " << endl;
+
+        // display matAdj
+        for (int i = 0; i < this->nbSommet; i++) {
+            for (int j = 0; j < this->nbSommet; j++) {
+                cout << matAdj[i][j] << " ";
+            }
+            cout << endl;
         }
-        cout << endl;
-    }
 
-    cout << "MatInc: " << endl;
-    // display matInc
-    for(int i = 0; i<this->nbSommet; i++){
-        for(int j = 0; j<this->nbSommet; j++){
-            if(isnan(matInc[i][j])){
-                cout << "/" << " ";
-            }else
-                cout << matInc[i][j] << " ";
+
+        cout << "MatInc: " << endl;
+
+        // display matInc
+        for (int i = 0; i < this->nbSommet; i++) {
+            for (int j = 0; j < this->nbSommet; j++) {
+                if (isnan(matInc[i][j])) {
+                    cout << "/" << " ";
+                } else
+                    cout << matInc[i][j] << " ";
+            }
+            cout << endl;
         }
-        cout << endl;
-    }
 
-    cout << endl;
+        cout << endl;
+    }else
+        cerr << "the Graphe hasn't been imported" <<endl;
 
 }
 

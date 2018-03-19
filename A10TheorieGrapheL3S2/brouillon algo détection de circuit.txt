@@ -1,0 +1,28 @@
+ Roy-Warshall (C)
+   pour k de 1 à n 
+     pour i de 1 à n
+       si C[i,k] alors
+         pour j de 1 à n
+           si C[k,j] alors C[i,j] = true 
+   retourner C
+
+
+
+
+
+
+typedef _Bool MatAdj[n][n]; // où n est le nombre de sommets de G
+
+void Warshall(MatAdj C, // la matrice d'adjacence de G
+              MatAdj A) // la matrice d'adjacence de G*
+{
+    int i, j, k;
+
+    for(i = 0; i < n; i++)
+        for(j = 0; j < n; j++)
+            A[i][j] = C[i][j];
+    for(k = 0; k < n; k++)
+        for(i = 0; i < n; i++)
+            for(j = 0; j < n; j++)
+                A[i][j] = A[i][j] || (A[i][k] && A[k][j]);
+}

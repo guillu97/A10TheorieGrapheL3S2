@@ -12,8 +12,6 @@
 #include <limits>
 #include <cmath>
 
-#include "Arete.h"
-
 
 class Graphe {
 
@@ -32,9 +30,16 @@ public:
     void importGraphe(std::string fileName);
     void displayGraphe();
 
-
-
 };
+
+typedef struct sommetListePredecesseurs { /*liste des prédecesseurs associés à un sommet*/
+ int sommet ;
+ sommetListePredecesseurs * predecesseurSuivant } sommetListePredecesseurs ;
+
+ typedef struct listeSommets { /*liste des listes de prédecesseurs = liste de sommets*/
+ int sommet ;
+ sommetListePredecesseurs * predecesseurs ;
+ listeSommets * sommetSuivant } listeSommets ;
 
 
 #endif //A10THEORIEGRAPHEL3S2_GRAPHE_H

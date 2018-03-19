@@ -12,6 +12,11 @@
 #include <limits>
 #include <cmath>
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 5cdf1cf06e800bed9a53b772a742223e53e3b5e9
 
 class Graphe {
 
@@ -19,15 +24,19 @@ private:
     std::string fileName;
     int nbSommet;
     int nbArc;
-    bool** matAdj;
-    double** matInc;
+    bool** matAdj = NULL;
+    double** matInc = NULL;
+
+
+    bool hasBeenImported;
+    void importGraphe(std::string fileName);
 
     //Arete* matAdj;
 
 
 public:
-    Graphe();
-    void importGraphe(std::string fileName);
+    Graphe(std::string fileName);
+
     void displayGraphe();
 
 };

@@ -12,14 +12,18 @@
 
 using namespace std;
 
-Graphe::Graphe() {
+Graphe::Graphe(string fileName) {
+    this->fileName = fileName;
+    this->hasBeenImported = false;
+    importGraphe(fileName);
 
 }
 
 
+
 void Graphe::importGraphe(string fileName) {
 
-    ifstream file(fileName, ios::in);  // on ouvre le fichier en lecture, le fichier est dans le même dossier que l'executable
+    ifstream file(fileName.c_str(), ios::in);  // on ouvre le fichier en lecture, le fichier est dans le même dossier que l'executable
 
 
     if(file)  // si l'ouverture a réussi
@@ -33,7 +37,7 @@ void Graphe::importGraphe(string fileName) {
 
         // créer tableau de booléen 2d   (matrice carrée de hauteur nb sommet)  toutes les cases sont initialisées à false
         matAdj = new bool*[this->nbSommet];
-        for(unsigned int i = 0; i < this->nbSommet; i++)
+        for(int i = 0; i < this->nbSommet; i++)
         {
             matAdj[i] = new bool[this->nbSommet];
             for(int j = 0; j <this->nbSommet; j++){
@@ -43,7 +47,7 @@ void Graphe::importGraphe(string fileName) {
 
         // créer tableau de int 2d  (matrice carrée de hauteur nb sommet) toutes les cases sont initialisées à 0
         matInc = new double*[this->nbSommet];
-        for(unsigned int i = 0; i < this->nbSommet; i++)
+        for(int i = 0; i < this->nbSommet; i++)
         {
             matInc[i] = new double[this->nbSommet];
             for(int j = 0; j <this->nbSommet; j++){
@@ -72,6 +76,8 @@ void Graphe::importGraphe(string fileName) {
             matInc[etatDebut][etatFin] = poids;
         }
 
+        hasBeenImported = true;
+
 
 
 
@@ -85,34 +91,42 @@ void Graphe::importGraphe(string fileName) {
 }
 
 void Graphe::displayGraphe() {
-    cout << "nb sommet: ";
-    cout << this->nbSommet << endl;
-    cout << "nb arc: ";
-    cout << this->nbArc << endl;
+
+    if(hasBeenImported) {
+        cout << "nb sommet: ";
+        cout << this->nbSommet << endl;
+
+        cout << "nb arc: ";
+        cout << this->nbArc << endl;
 
 
-    cout << "MatAdj: " << endl;
-    // display matAdj
-    for(int i = 0; i<this->nbSommet; i++){
-        for(int j = 0; j<this->nbSommet; j++){
-            cout << matAdj[i][j] << " ";
+        cout << "MatAdj: " << endl;
+
+        // display matAdj
+        for (int i = 0; i < this->nbSommet; i++) {
+            for (int j = 0; j < this->nbSommet; j++) {
+                cout << matAdj[i][j] << " ";
+            }
+            cout << endl;
         }
-        cout << endl;
-    }
 
-    cout << "MatInc: " << endl;
-    // display matInc
-    for(int i = 0; i<this->nbSommet; i++){
-        for(int j = 0; j<this->nbSommet; j++){
-            if(isnan(matInc[i][j])){
-                cout << "/" << " ";
-            }else
-                cout << matInc[i][j] << " ";
+
+        cout << "MatInc: " << endl;
+
+        // display matInc
+        for (int i = 0; i < this->nbSommet; i++) {
+            for (int j = 0; j < this->nbSommet; j++) {
+                if (isnan(matInc[i][j])) {
+                    cout << "/" << " ";
+                } else
+                    cout << matInc[i][j] << " ";
+            }
+            cout << endl;
         }
-        cout << endl;
-    }
 
-    cout << endl;
+        cout << endl;
+    }else
+        cerr << "the Graphe hasn't been imported" <<endl;
 
 }
 

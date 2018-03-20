@@ -17,7 +17,7 @@
 #include "Etat.h"
 #include "Arc.h"
 
-#define DEBUG 0
+#define DEBUG 1
 
 class Graphe {
 
@@ -31,7 +31,10 @@ private:
     double** matInc = NULL;
 
     std::vector <Arc*> tabArcs;
+    std::vector <int> tabPointEntrees;
+
     Etat* tabEtats[];
+
 
 
     //Arete* matAdj;
@@ -39,9 +42,12 @@ private:
 
 public:
     Graphe(std::string fileName);
+    Graphe(Graphe& test);
+
     void importGraphe(std::string fileName);
     void displayGraphe();
-
+    void recherchePointsEntrees();
+    void displayPointEntrees();
 
 
 };

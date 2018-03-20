@@ -13,6 +13,7 @@ private:
 public:
     Arc(Etat* extremiteInitiale, Etat* extremiteTerminale, int poids);
 
+
     void afficherArc();
 
     Etat* getExtremiteInitiale();

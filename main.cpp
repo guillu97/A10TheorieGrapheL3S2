@@ -34,6 +34,7 @@ int main()
 
             Graphe graphe(fileName);
             graphe.displayGraphe();
+            graphe.recherchePointsEntrees();
 
             break;
             }

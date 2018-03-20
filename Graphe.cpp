@@ -20,6 +20,10 @@ Graphe::Graphe(string fileName) {
 
 
 }
+Graphe::Graphe(Graphe& test) {
+    this->fileName = test.fileName;
+    importGraphe(fileName);
+}
 
 
 void Graphe::importGraphe(string fileName) {
@@ -211,5 +215,51 @@ void Graphe::displayGraphe() {
 
 
 }
+
+/** @brief (one liner)
+  *
+  * (documentation goes here)
+  */
+void Graphe::recherchePointsEntrees(){
+    int sum = 0;
+    for(int j = 0; j<this->nbSommet; j++){
+        sum = 0;
+        for(int i = 0; i<this->nbSommet; i++){
+            cout<< "mat ["<<i<<"]"<<"["<<j<<"] " << matAdj[i][j] <<endl;
+            if(matAdj[i][j]){
+                    cout<<"test" <<endl;
+                sum++;
+            }
+        }
+        cout<<endl;
+
+        if(sum == 0){
+            tabPointEntrees.push_back(j);
+        }
+    }
+
+    #if DEBUG == 1
+        displayPointEntrees();
+
+
+    #endif // DEBUG
+}
+
+void Graphe::displayPointEntrees(){
+    cout<<endl;
+    cout<<endl;
+
+    cout << "Points d'entrees"<<endl;
+
+    if(tabPointEntrees.size() == 0)
+        cout<<"Il n y a pas de point d entree"<<endl;
+    else{
+        for(unsigned int i = 0; i<tabPointEntrees.size(); i++)
+            cout<<"Etat "<< tabPointEntrees[i] <<endl;
+    }
+    cout<<endl;
+    cout<<endl;
+}
+
 
 

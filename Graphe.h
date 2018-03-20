@@ -31,9 +31,12 @@ private:
     double** matInc = NULL;
 
     std::vector <Arc*> tabArcs;
-    std::vector <int> tabPointEntrees;
 
-    Etat* tabEtats[];
+    // En UTILISANT matAdj
+    //std::vector <int> tabPointEntrees;
+    std::vector <Etat*> tabPointEntrees;
+
+    std::vector<Etat*> tabEtats;
 
 
 

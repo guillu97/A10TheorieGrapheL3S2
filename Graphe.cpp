@@ -20,9 +20,9 @@ Graphe::Graphe(string fileName) {
 
 
 }
-Graphe::Graphe(Graphe* test) {
-    this->fileName = test->fileName;
-    importGraphe(fileName);
+Graphe::Graphe(Graphe* autreGraphe) {
+    this->fileName = autreGraphe->fileName;
+    this->importGraphe(fileName);
 }
 
 
@@ -43,7 +43,7 @@ void Graphe::importGraphe(string fileName) {
 
         // create a tabEtat with all the states, then we will add the successors
         for(int i = 0; i<this->nbSommet; i++){
-            this->tabEtats[i] = new Etat(i);
+            tabEtats.push_back(new Etat(i));
         }
 
         #if DEBUG == 1
@@ -221,6 +221,39 @@ void Graphe::displayGraphe() {
   * (documentation goes here)
   */
 void Graphe::recherchePointsEntrees(){
+
+    // cette somme permet de vérifier s'il l'état est présent parmi les successeurs de tous les états
+    int sum = 0;
+    // on va parcourir tout le tableau des états
+    for(unsigned int i = 0; i<this->tabEtats.size(); i++){
+            sum = 0;
+            for(unsigned int j = 0; j<this->tabEtats.size(); j++){
+
+                // on récupère son tableau de successeurs
+                vector<Etat*>tabSuccesseurs = tabEtats[tabEtats[j]->getNom()]->getSuccesseurs();
+
+
+                // on recherche dans le tableau des successeurs de l'état  (tabEtat[tabEtats[j]->getNom()])
+                // pour voir si l'état tabEtats[i]->getNom() est présent ou non.
+                // si à la fin du 'for' sum = 0, alors létat n'est pas présent
+                 for(unsigned int k = 0; k< tabSuccesseurs.size(); k++){
+                    if(tabSuccesseurs[k]->getNom() == tabEtats[i]->getNom())
+                        sum++;
+                 }
+            }
+            if(sum == 0){
+                tabPointEntrees.push_back(tabEtats[i]);
+            }
+    }
+    #if DEBUG == 1
+        displayPointEntrees();
+
+
+    #endif // DEBUG
+
+
+    /*
+     En UTILISANT la matrice d'adjacence
     int sum = 0;
     for(int j = 0; j<this->nbSommet; j++){
         sum = 0;
@@ -243,6 +276,8 @@ void Graphe::recherchePointsEntrees(){
 
 
     #endif // DEBUG
+
+    */
 }
 
 void Graphe::displayPointEntrees(){
@@ -254,9 +289,19 @@ void Graphe::displayPointEntrees(){
     if(tabPointEntrees.size() == 0)
         cout<<"Il n y a pas de point d entree"<<endl;
     else{
+          for(unsigned int i = 0; i<tabPointEntrees.size(); i++)
+            cout<<"Etat "<< tabPointEntrees[i]->getNom() <<endl;
+    }
+
+    /*
+    En UTILISANT la matrice d'adjacence
+    if(tabPointEntrees.size() == 0)
+        cout<<"Il n y a pas de point d entree"<<endl;
+    else{
         for(unsigned int i = 0; i<tabPointEntrees.size(); i++)
             cout<<"Etat "<< tabPointEntrees[i] <<endl;
     }
+    */
     cout<<endl;
     cout<<endl;
 }

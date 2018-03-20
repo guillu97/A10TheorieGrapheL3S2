@@ -42,7 +42,7 @@ void Graphe::importGraphe(string fileName) {
             this->tabEtats[i] = new Etat(i);
         }
 
-        //debug
+        #if DEBUG == 1
         cout <<endl;
         cout << "Les etats presents: " <<endl;
         for(int i = 0; i<this->nbSommet; i++ ){
@@ -50,13 +50,7 @@ void Graphe::importGraphe(string fileName) {
         }
         cout <<endl;
         cout <<endl;
-
-        //test arete
-//        cout << "Un arc" << endl;
-//        Arc test(tabEtats[0],tabEtats[1],9);
-//        test.afficherArc();
-//        cout << test.getExtremiteTerminale()->getNom()<<endl;
-
+        #endif // DEBUG
 
 
 
@@ -90,11 +84,21 @@ void Graphe::importGraphe(string fileName) {
         for(int i = 0; i < this->nbArc; i++){
 
             file >> etatDebut;
-            cout << "etatDebut: " << etatDebut << " ";
+
             file >> etatFin;
-            cout << "etatFin: " << etatFin<< " ";
+
             file >> poids;
-            cout<< "poids: " << poids << endl;
+
+
+            #if DEBUG == 1
+
+                cout <<"DEBUG"<<endl;
+                cout << "etatDebut: " << etatDebut << " ";
+
+                cout << "etatFin: " << etatFin<< " ";
+
+                cout<< "poids: " << poids << endl;
+            #endif // DEBUG
 
             // remplir une case matAdj avec true
             matAdj[etatDebut][etatFin] = true;
@@ -111,41 +115,44 @@ void Graphe::importGraphe(string fileName) {
 
         }
 
-        //debug
-        cout << endl;
-        cout << endl;
+        #if DEBUG == 1
 
-        cout << "Tous les etats et leurs successeurs: "<<endl;
-        for(int i = 0; i<this->nbSommet; i++){
-            //vector <Etat*> tempTabSuccesseurs = tabEtats[i]->getSuccesseurs();
-            cout << "Etat " << tabEtats[i]->getNom() << " :"<<endl;
-            cout<< "successeurs: [ ";
-            for(unsigned int j = 0; j<tabEtats[i]->getSuccesseurs().size(); j++){
-                cout << tabEtats[i]->getSuccesseurs()[j]->getNom() << " ";
+            cout << endl;
+            cout << endl;
+            cout << "DEBUG" <<endl;
+
+            cout << "Tous les etats et leurs successeurs: "<<endl;
+            for(int i = 0; i<this->nbSommet; i++){
+                //vector <Etat*> tempTabSuccesseurs = tabEtats[i]->getSuccesseurs();
+                cout << "Etat " << tabEtats[i]->getNom() << " :"<<endl;
+                cout<< "successeurs: [ ";
+                for(unsigned int j = 0; j<tabEtats[i]->getSuccesseurs().size(); j++){
+                    cout << tabEtats[i]->getSuccesseurs()[j]->getNom() << " ";
+                }
+                cout <<"]"<<endl;
             }
-            cout <<"]"<<endl;
-        }
 
-        cout << endl;
-        cout << endl;
+            cout << endl;
+            cout << endl;
 
 
-        //debug
-        cout << endl;
-        cout << endl;
+            cout << endl;
+            cout << endl;
 
-        cout << "Tous les arcs: "<<endl;
-        for(int i = 0; i< this->nbArc; i++){
-            //vector <Etat*> tempTabSuccesseurs = tabEtats[i]->getSuccesseurs();
-            cout << "Arc : " <<endl;
-            cout << "Etat debut " << tabArcs[i]->getExtremiteInitiale()->getNom();
-            cout<< " Etat fin " << tabArcs[i]->getExtremiteTerminale()->getNom();
-            cout<< " Poids " << tabArcs[i]->getPoids();
-            cout <<endl;
-        }
+            cout << "Tous les arcs: "<<endl;
+            for(int i = 0; i< this->nbArc; i++){
+                //vector <Etat*> tempTabSuccesseurs = tabEtats[i]->getSuccesseurs();
+                cout << "Arc : " <<endl;
+                cout << "Etat debut " << tabArcs[i]->getExtremiteInitiale()->getNom();
+                cout<< " Etat fin " << tabArcs[i]->getExtremiteTerminale()->getNom();
+                cout<< " Poids " << tabArcs[i]->getPoids();
+                cout <<endl;
+            }
 
-        cout << endl;
-        cout << endl;
+            cout << endl;
+            cout << endl;
+
+        #endif // DEBUG
 
 
 

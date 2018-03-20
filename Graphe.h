@@ -16,9 +16,14 @@
 
 #include "Etat.h"
 #include "Arc.h"
+
+#define DEBUG 0
+
 class Graphe {
 
 private:
+
+
     std::string fileName;
     int nbSommet;
     int nbArc;

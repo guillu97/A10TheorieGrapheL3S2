@@ -42,7 +42,7 @@ private:
 
 public:
     Graphe(std::string fileName);
-    Graphe(Graphe& test);
+    Graphe(Graphe* test);
 
     void importGraphe(std::string fileName);
     void displayGraphe();

@@ -20,8 +20,8 @@ Graphe::Graphe(string fileName) {
 
 
 }
-Graphe::Graphe(Graphe& test) {
-    this->fileName = test.fileName;
+Graphe::Graphe(Graphe* test) {
+    this->fileName = test->fileName;
     importGraphe(fileName);
 }
 

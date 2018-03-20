@@ -52,10 +52,10 @@ void Graphe::importGraphe(string fileName) {
         cout <<endl;
 
         //test arete
-        cout << "Un arc" << endl;
-        Arc test(*tabEtats[0],*tabEtats[1],9);
-        test.afficherArc();
-        cout << test.getExtremiteTerminale().getNom()<<endl;
+//        cout << "Un arc" << endl;
+//        Arc test(tabEtats[0],tabEtats[1],9);
+//        test.afficherArc();
+//        cout << test.getExtremiteTerminale()->getNom()<<endl;
 
 
 
@@ -84,7 +84,7 @@ void Graphe::importGraphe(string fileName) {
 
 
 
-        // remplir matAdj et matInc
+        // remplir matAdj, matInc, tabEtats et tabArc
         int etatDebut, etatFin, poids;
 
         for(int i = 0; i < this->nbArc; i++){
@@ -106,6 +106,9 @@ void Graphe::importGraphe(string fileName) {
             //we add the successor to the tabEtats
             tabEtats[etatDebut]->ajoutSuccesseur(etatFin);
 
+            // ajoute les arcs
+            tabArcs.push_back(new Arc(tabEtats[etatDebut], tabEtats[etatFin], poids));
+
         }
 
         //debug
@@ -121,6 +124,24 @@ void Graphe::importGraphe(string fileName) {
                 cout << tabEtats[i]->getSuccesseurs()[j]->getNom() << " ";
             }
             cout <<"]"<<endl;
+        }
+
+        cout << endl;
+        cout << endl;
+
+
+        //debug
+        cout << endl;
+        cout << endl;
+
+        cout << "Tous les arcs: "<<endl;
+        for(int i = 0; i< this->nbArc; i++){
+            //vector <Etat*> tempTabSuccesseurs = tabEtats[i]->getSuccesseurs();
+            cout << "Arc : " <<endl;
+            cout << "Etat debut " << tabArcs[i]->getExtremiteInitiale()->getNom();
+            cout<< " Etat fin " << tabArcs[i]->getExtremiteTerminale()->getNom();
+            cout<< " Poids " << tabArcs[i]->getPoids();
+            cout <<endl;
         }
 
         cout << endl;
@@ -179,6 +200,8 @@ void Graphe::displayGraphe() {
         cout << "matInc est vide" <<endl;
 
     cout << endl;
+
+
 
 }
 

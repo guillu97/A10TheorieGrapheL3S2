@@ -3,25 +3,25 @@
 
 using namespace std;
 
-Arc::Arc(Etat& extremiteInitiale, Etat& extremiteTerminale, int poid){
+Arc::Arc(Etat* extremiteInitiale, Etat* extremiteTerminale, int poids){
         this->extremiteInitiale = extremiteInitiale;
         this->extremiteTerminale = extremiteTerminale;
-        this->poid = poid;
+        this->poids = poids;
 }
 
 
 void Arc::afficherArc(){
-    cout << "extremiteInitiale = " << extremiteInitiale.getNom() << "extremiteTerminale = " << extremiteTerminale.getNom() << "poid" << poid << endl << endl;
+    cout << "extremiteInitiale = " << extremiteInitiale->getNom() << " extremiteTerminale = " << extremiteTerminale->getNom() << " poid " << poids << endl << endl;
 }
 
-Etat Arc::getExtremiteInitiale(){
+Etat* Arc::getExtremiteInitiale(){
     return extremiteInitiale;
 }
 
-Etat Arc::getExtremiteTerminale(){
+Etat* Arc::getExtremiteTerminale(){
     return extremiteTerminale;
 }
 
-int Arc::getPoid(){
-    return poid;
+int Arc::getPoids(){
+    return poids;
 }

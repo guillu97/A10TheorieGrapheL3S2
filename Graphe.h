@@ -24,6 +24,8 @@ private:
     int nbArc;
     bool** matAdj = NULL;
     double** matInc = NULL;
+
+    std::vector <Arc*> tabArcs;
     Etat* tabEtats[];
 
 

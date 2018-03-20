@@ -6,20 +6,20 @@
 
 class Arc{
 private:
-    Etat extremiteInitiale;
-    Etat extremiteTerminale;
-    int poid;
+    Etat* extremiteInitiale;
+    Etat* extremiteTerminale;
+    int poids;
 
 public:
-    Arc(Etat& extremiteInitiale, Etat& extremiteTerminale, int poid);
+    Arc(Etat* extremiteInitiale, Etat* extremiteTerminale, int poids);
 
     void afficherArc();
 
-    Etat getExtremiteInitiale();
+    Etat* getExtremiteInitiale();
 
-    Etat getExtremiteTerminale();
+    Etat* getExtremiteTerminale();
 
-    int getPoid();
+    int getPoids();
 
 };
 #endif //A10THEORIEGRAPHEL3S2_ETAT_H

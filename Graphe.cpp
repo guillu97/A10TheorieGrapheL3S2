@@ -143,19 +143,22 @@ void Graphe::importGraphe(string fileName) {
             cout << endl;
 
             cout << "Tous les etats et leurs arcs: "<<endl;
+            cout << endl;
             for(int i = 0; i<this->nbSommet; i++){
                 //vector <Etat*> tempTabSuccesseurs = tabEtats[i]->getSuccesseurs();
                 cout << "Etat " << tabEtats[i]->getNom() << " :"<<endl;
-                cout<< "Arcs sortants: [ ";
+                cout<< "Arcs sortants ("<< tabEtats[i]->getTabArcsSortants().size()<<") : " <<endl<< "[ "<<endl;
                 for(unsigned int j = 0; j<tabEtats[i]->getTabArcsSortants().size(); j++){
                     tabEtats[i]->getTabArcsSortants()[j]->afficherArc();
                 }
                 cout <<"]"<<endl;
-                cout<< "Arcs entrants: [ ";
+                cout<< "Arcs entrants (" << tabEtats[i]->getTabArcsEntrants().size() <<") : " <<endl<< "[ "<<endl;
                 for(unsigned int j = 0; j<tabEtats[i]->getTabArcsEntrants().size(); j++){
                     tabEtats[i]->getTabArcsEntrants()[j]->afficherArc();
                 }
                 cout <<"]"<<endl;
+
+                cout << endl;
             }
 
             cout << endl;

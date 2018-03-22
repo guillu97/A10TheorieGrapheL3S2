@@ -11,7 +11,7 @@ Arc::Arc(Etat* extremiteInitiale, Etat* extremiteTerminale, int poids){
 
 
 void Arc::afficherArc(){
-    cout << "extremiteInitiale = " << extremiteInitiale->getNom() << " extremiteTerminale = " << extremiteTerminale->getNom() << " poid " << poids << endl << endl;
+    cout << " extremiteInitiale = " << extremiteInitiale->getNom() << " extremiteTerminale = " << extremiteTerminale->getNom() << " poid " << poids;
 }
 
 Etat* Arc::getExtremiteInitiale(){

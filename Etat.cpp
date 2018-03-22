@@ -20,4 +20,12 @@ void Etat::ajoutSuccesseur(int nom)
     this->successeurs.push_back(new Etat(nom));
 }
 
+void Etat::ajoutArcEntrants(Arc* arc){
+    this->tabArcsEntrants.push_back(arc);
+}
+void Etat::ajoutArcSortants(Arc* arc){
+    this->tabArcsSortants.push_back(arc);
+}
+
+
 

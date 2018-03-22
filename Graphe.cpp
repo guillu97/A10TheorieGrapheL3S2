@@ -117,6 +117,9 @@ void Graphe::importGraphe(string fileName) {
             // ajoute les arcs
             tabArcs.push_back(new Arc(tabEtats[etatDebut], tabEtats[etatFin], poids));
 
+            //ajoute les arcs dans les états
+            tabEtats[etatDebut]->ajoutArcSortants(new Arc(tabEtats[etatDebut], tabEtats[etatFin], poids));
+            tabEtats[etatFin]->ajoutArcEntrants(new Arc(tabEtats[etatFin], tabEtats[etatDebut], poids));
         }
 
         #if DEBUG == 1
@@ -139,6 +142,21 @@ void Graphe::importGraphe(string fileName) {
             cout << endl;
             cout << endl;
 
+            cout << "Tous les etats et leurs arcs: "<<endl;
+            for(int i = 0; i<this->nbSommet; i++){
+                //vector <Etat*> tempTabSuccesseurs = tabEtats[i]->getSuccesseurs();
+                cout << "Etat " << tabEtats[i]->getNom() << " :"<<endl;
+                cout<< "Arcs sortants: [ ";
+                for(unsigned int j = 0; j<tabEtats[i]->getTabArcsSortants().size(); j++){
+                    tabEtats[i]->getTabArcsSortants()[j]->afficherArc();
+                }
+                cout <<"]"<<endl;
+                cout<< "Arcs entrants: [ ";
+                for(unsigned int j = 0; j<tabEtats[i]->getTabArcsEntrants().size(); j++){
+                    tabEtats[i]->getTabArcsEntrants()[j]->afficherArc();
+                }
+                cout <<"]"<<endl;
+            }
 
             cout << endl;
             cout << endl;

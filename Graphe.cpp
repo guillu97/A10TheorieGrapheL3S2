@@ -161,6 +161,7 @@ void Graphe::importGraphe(string fileName) {
             cout << endl;
             cout << endl;
 
+
             cout << "Tous les arcs: "<<endl;
             for(int i = 0; i< this->nbArc; i++){
                 //vector <Etat*> tempTabSuccesseurs = tabEtats[i]->getSuccesseurs();

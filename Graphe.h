@@ -32,6 +32,7 @@ private:
     // En utilisant matAdj
     std::vector <int> tabPointEntree;
 
+    std::vector< std::vector<int> > tabRang;
 
 
 
@@ -46,6 +47,10 @@ public:
     void displayPointEntree();
     bool detectionCircuit();
     bool verifMatAdjVide();
+
+    void calcRang();
+    void displayRang();
+
     void niveau1();
 
 };

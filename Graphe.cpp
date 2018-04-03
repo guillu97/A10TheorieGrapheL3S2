@@ -24,6 +24,7 @@ Graphe::Graphe(Graphe& g){
     this->matAdj = g.matAdj;
     this->matInc = g.matInc;
     this->tabPointEntree = g.tabPointEntree;
+    this->tabRang = g.tabRang;
 }
 
 
@@ -324,14 +325,98 @@ bool Graphe::verifMatAdjVide(){
     return true;
 }
 
+void Graphe::calcRang(){
+// copie des matrices
+    Graphe copieGraphe = *this;
+
+    #if DEBUG == 1
+        cout<<endl;
+        cout<<endl;
+        cout <<"////// DEBUG : "<<endl;
+        cout << "copieGraphe : " <<endl;
+        copieGraphe.displayGraphe();
+        cout <<"////// : DEBUG"<<endl;
+        cout<<endl;
+        cout<<endl;
+    #endif // DEBUG
+
+    /* test de copie (à ustiliser avec un graphe dont la matAdj à false pour [0][0]
+        matAdj[0][0] = true;
+
+        cout<<endl;
+        cout << "111111111111111111"<<endl;
+        displayGraphe();
+        cout<<endl;
+        cout << "2222222222222222"<<endl;
+        copieGraphe.displayGraphe();
+    */
+
+
+
+    // test remise à zero car on fait la recherche dès le début du do while
+    // ( on peut aussi éviter de copier le tabPointEntree dans la copieGraphe, à VOIR)
+    copieGraphe.tabPointEntree = vector<int>();
+
+    vector<int> rangI;
+
+    // on effectue la recherche tant qu'on trouve des points d'entrée
+    do{
+        // on recherche les points d'entrés sur la matrice copiée
+
+        //cout << "entrée avant" <<endl;
+        //copieGraphe.displayPointEntree();
+        copieGraphe.recherchePointsEntree();
+        //cout << "entrée après" <<endl;
+        //copieGraphe.displayPointEntree();
+
+        // besoin de fixer la taille, vu qu'on supprime en même temps
+        const unsigned int tabPointEntreeSize = copieGraphe.tabPointEntree.size();
+        // on selectionne les lignes qui représentent les points d'entrée dans la matAdj
+        for(unsigned int k = 0; k<tabPointEntreeSize; k++){
+
+            //cout <<"test " <<k<< copieGraphe.tabPointEntree[k] <<endl;
+            for(int j = 0; j<copieGraphe.nbSommet; j++){
+                    // on met à false toutes les colonnes sur la ligne d'un point d'entrée
+                    matAdj[copieGraphe.tabPointEntree[k]][j] = false;
+                    // puis on passe au suivant point d'entrée
+            }
+            // on ajoute l'état dans le tableau de rang, au rangI
+            rangI.push_back(copieGraphe.tabPointEntree[k]);
+
+            // on supprime le point d'entrée du tableau
+            copieGraphe.tabPointEntree.erase(copieGraphe.tabPointEntree.begin());
+
+        }
+
+        copieGraphe.tabRang.push_back(rangI);
+    }while(copieGraphe.tabPointEntree.size() != 0);
+
+    copieGraphe.displayRang();
+
+}
+
+void Graphe::displayRang(){
+    cout << "Rangs : " <<endl;
+    for(unsigned int i = 0; i<tabRang.size(); i++){
+        cout << "Rang " << i <<" : " <<endl;
+        for(unsigned int j = 0; j<tabRang[i].size(); j++){
+            cout << "["<<tabRang[i][j] <<"] ";
+        }
+        cout <<endl;
+    }
+
+}
+
 void Graphe::niveau1(){
     // TODO: ajouter un truc du genre if bien importé displayGraphe()
     displayGraphe();
     recherchePointsEntree();
     if(!detectionCircuit())
-        cout << "pas de circuit" <<endl;
+        cout << "Pas de circuit" <<endl;
     else
-        cout << "un circuit" <<endl;
+        cout << "Un circuit" <<endl;
+    //test
+    calcRang();
 }
 
 

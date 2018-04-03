@@ -15,14 +15,15 @@ using namespace std;
 Graphe::Graphe(string fileName) {
     this->fileName = fileName;
     importGraphe(fileName);
-
-
-
-
 }
-Graphe::Graphe(Graphe* autreGraphe) {
-    this->fileName = autreGraphe->fileName;
-    this->importGraphe(fileName);
+
+Graphe::Graphe(Graphe& g){
+    this->fileName = g.fileName;
+    this->nbSommet = g.nbSommet;
+    this->nbArc = g.nbArc;
+    this->matAdj = g.matAdj;
+    this->matInc = g.matInc;
+    this->tabPointEntree = g.tabPointEntree;
 }
 
 
@@ -35,30 +36,17 @@ void Graphe::importGraphe(string fileName) {
     {
 
 
-        // instructions
-
         file >> this->nbSommet;
         file >> this->nbArc;
 
 
-        // create a tabEtat with all the states, then we will add the successors
-        for(int i = 0; i<this->nbSommet; i++){
-            tabEtats.push_back(new Etat(i));
-        }
-
-        #if DEBUG == 1
-        cout <<endl;
-        cout << "Les etats presents: " <<endl;
-        for(int i = 0; i<this->nbSommet; i++ ){
-            cout << tabEtats[i]->getNom() << " ";
-        }
-        cout <<endl;
-        cout <<endl;
-        #endif // DEBUG
-
 
 
         // créer tableau de booléen 2d   (matrice carrée de hauteur nb sommet)  toutes les cases sont initialisées à false
+
+
+        /* En utilisant un bool**
+
         matAdj = new bool*[this->nbSommet];
         for(int i = 0; i < this->nbSommet; i++)
         {
@@ -67,9 +55,22 @@ void Graphe::importGraphe(string fileName) {
                 matAdj[i][j] = false;
             }
         }
+        */
+
+
+        // en utilisant vector<vector<bool>>
+        for(int i = 0; i < this->nbSommet; i++){
+            vector<bool> row;
+            for(int j = 0; j <this->nbSommet; j++){
+                row.push_back(false);
+            }
+            matAdj.push_back(row);
+        }
 
         // créer tableau de int 2d  (matrice carrée de hauteur nb sommet) toutes les cases sont initialisées à 0
-        matInc = new double*[this->nbSommet];
+
+       /*
+       matInc = new double*[this->nbSommet];
         for(int i = 0; i < this->nbSommet; i++)
         {
             matInc[i] = new double[this->nbSommet];
@@ -77,6 +78,17 @@ void Graphe::importGraphe(string fileName) {
                 matInc[i][j] = NAN;
 
             }
+        }
+
+        */
+
+        // en utilisant vector< vector<int> >
+        for(int i = 0; i < this->nbSommet; i++){
+            vector<int> row;
+            for(int j = 0; j <this->nbSommet; j++){
+                row.push_back(0);
+            }
+            matInc.push_back(row);
         }
 
 
@@ -95,14 +107,20 @@ void Graphe::importGraphe(string fileName) {
 
 
             #if DEBUG == 1
-
-                cout <<"DEBUG"<<endl;
+                cout<<endl;
+                cout<<endl;
+                cout <<"DEBUG : "<<endl;
                 cout << "etatDebut: " << etatDebut << " ";
 
                 cout << "etatFin: " << etatFin<< " ";
 
                 cout<< "poids: " << poids << endl;
+
+                cout <<" : DEBUG"<<endl;
+                cout<<endl;
+                cout<<endl;
             #endif // DEBUG
+
 
             // remplir une case matAdj avec true
             matAdj[etatDebut][etatFin] = true;
@@ -111,78 +129,7 @@ void Graphe::importGraphe(string fileName) {
             matInc[etatDebut][etatFin] = poids;
 
 
-            //we add the successor to the tabEtats
-            tabEtats[etatDebut]->ajoutSuccesseur(etatFin);
-
-            // ajoute les arcs
-            tabArcs.push_back(new Arc(tabEtats[etatDebut], tabEtats[etatFin], poids));
-
-            //ajoute les arcs dans les états
-            tabEtats[etatDebut]->ajoutArcSortants(new Arc(tabEtats[etatDebut], tabEtats[etatFin], poids));
-            tabEtats[etatFin]->ajoutArcEntrants(new Arc(tabEtats[etatFin], tabEtats[etatDebut], poids));
         }
-
-        #if DEBUG == 1
-
-            cout << endl;
-            cout << endl;
-            cout << "DEBUG" <<endl;
-
-            cout << "Tous les etats et leurs successeurs: "<<endl;
-            for(int i = 0; i<this->nbSommet; i++){
-                //vector <Etat*> tempTabSuccesseurs = tabEtats[i]->getSuccesseurs();
-                cout << "Etat " << tabEtats[i]->getNom() << " :"<<endl;
-                cout<< "successeurs: [ ";
-                for(unsigned int j = 0; j<tabEtats[i]->getSuccesseurs().size(); j++){
-                    cout << tabEtats[i]->getSuccesseurs()[j]->getNom() << " ";
-                }
-                cout <<"]"<<endl;
-            }
-
-            cout << endl;
-            cout << endl;
-
-            cout << "Tous les etats et leurs arcs: "<<endl;
-            cout << endl;
-            for(int i = 0; i<this->nbSommet; i++){
-                //vector <Etat*> tempTabSuccesseurs = tabEtats[i]->getSuccesseurs();
-                cout << "Etat " << tabEtats[i]->getNom() << " :"<<endl;
-                cout<< "Arcs sortants ("<< tabEtats[i]->getTabArcsSortants().size()<<") : " <<endl<< "[ "<<endl;
-                for(unsigned int j = 0; j<tabEtats[i]->getTabArcsSortants().size(); j++){
-                    tabEtats[i]->getTabArcsSortants()[j]->afficherArc();
-                }
-                cout <<"]"<<endl;
-                cout<< "Arcs entrants (" << tabEtats[i]->getTabArcsEntrants().size() <<") : " <<endl<< "[ "<<endl;
-                for(unsigned int j = 0; j<tabEtats[i]->getTabArcsEntrants().size(); j++){
-                    tabEtats[i]->getTabArcsEntrants()[j]->afficherArc();
-                }
-                cout <<"]"<<endl;
-
-                cout << endl;
-            }
-
-            cout << endl;
-            cout << endl;
-
-
-            cout << "Tous les arcs: "<<endl;
-            for(int i = 0; i< this->nbArc; i++){
-                //vector <Etat*> tempTabSuccesseurs = tabEtats[i]->getSuccesseurs();
-                cout << "Arc : " <<endl;
-                cout << "Etat debut " << tabArcs[i]->getExtremiteInitiale()->getNom();
-                cout<< " Etat fin " << tabArcs[i]->getExtremiteTerminale()->getNom();
-                cout<< " Poids " << tabArcs[i]->getPoids();
-                cout <<endl;
-            }
-
-            cout << endl;
-            cout << endl;
-
-        #endif // DEBUG
-
-
-
-
 
         file.close();  // on ferme le fichier
 
@@ -204,7 +151,7 @@ void Graphe::displayGraphe() {
 
     cout << "MatAdj: " << endl;
 
-    if(matAdj != NULL){
+    if(matAdj.size() != 0){
         // display matAdj
         for(int i = 0; i<this->nbSommet; i++){
             for(int j = 0; j<this->nbSommet; j++){
@@ -218,7 +165,7 @@ void Graphe::displayGraphe() {
     cout << endl;
 
     cout << "MatInc: " << endl;
-    if(matInc != NULL){
+    if(matInc.size() != 0){
         // display matInc
         for(int i = 0; i<this->nbSommet; i++){
             for(int j = 0; j<this->nbSommet; j++){
@@ -238,94 +185,153 @@ void Graphe::displayGraphe() {
 
 }
 
-/** @brief (one liner)
-  *
-  * (documentation goes here)
-  */
-void Graphe::recherchePointsEntrees(){
 
-    // cette somme permet de vérifier s'il l'état est présent parmi les successeurs de tous les états
-    int sum = 0;
-    // on va parcourir tout le tableau des états
-    for(unsigned int i = 0; i<this->tabEtats.size(); i++){
-            sum = 0;
-            for(unsigned int j = 0; j<this->tabEtats.size(); j++){
+void Graphe::recherchePointsEntree(){
 
-                // on récupère son tableau de successeurs
-                vector<Etat*>tabSuccesseurs = tabEtats[tabEtats[j]->getNom()]->getSuccesseurs();
-
-
-                // on recherche dans le tableau des successeurs de l'état  (tabEtat[tabEtats[j]->getNom()])
-                // pour voir si l'état tabEtats[i]->getNom() est présent ou non.
-                // si à la fin du 'for' sum = 0, alors létat n'est pas présent
-                 for(unsigned int k = 0; k< tabSuccesseurs.size(); k++){
-                    if(tabSuccesseurs[k]->getNom() == tabEtats[i]->getNom())
-                        sum++;
-                 }
-            }
-            if(sum == 0){
-                tabPointEntrees.push_back(tabEtats[i]);
-            }
-    }
-    #if DEBUG == 1
-        displayPointEntrees();
-
-
-    #endif // DEBUG
-
-
-    /*
-     En UTILISANT la matrice d'adjacence
+    // en utilisant la matrice d'adjacence
     int sum = 0;
     for(int j = 0; j<this->nbSommet; j++){
         sum = 0;
         for(int i = 0; i<this->nbSommet; i++){
-            cout<< "mat ["<<i<<"]"<<"["<<j<<"] " << matAdj[i][j] <<endl;
+            //cout<< "matrice d adjacence en  ["<<i<<"]"<<"["<<j<<"] " << matAdj[i][j] <<endl;
             if(matAdj[i][j]){
-                    cout<<"test" <<endl;
                 sum++;
             }
         }
         cout<<endl;
 
         if(sum == 0){
-            tabPointEntrees.push_back(j);
+            tabPointEntree.push_back(j);
         }
     }
 
     #if DEBUG == 1
-        displayPointEntrees();
-
-
+        cout<<endl;
+        cout<<endl;
+        cout <<"////// DEBUG : "<<endl;
+        displayPointEntree();
+        cout <<"////// : DEBUG"<<endl;
+        cout<<endl;
+        cout<<endl;
     #endif // DEBUG
 
-    */
+
 }
 
-void Graphe::displayPointEntrees(){
+void Graphe::displayPointEntree(){
     cout<<endl;
     cout<<endl;
 
     cout << "Points d'entrees"<<endl;
 
-    if(tabPointEntrees.size() == 0)
+    // En utilisant la matrice d'adjacence
+
+    if(tabPointEntree.size() == 0)
         cout<<"Il n y a pas de point d entree"<<endl;
     else{
-          for(unsigned int i = 0; i<tabPointEntrees.size(); i++)
-            cout<<"Etat "<< tabPointEntrees[i]->getNom() <<endl;
+        for(unsigned int i = 0; i<tabPointEntree.size(); i++)
+            cout<<"Etat "<< tabPointEntree[i] <<endl;
     }
 
-    /*
-    En UTILISANT la matrice d'adjacence
-    if(tabPointEntrees.size() == 0)
-        cout<<"Il n y a pas de point d entree"<<endl;
-    else{
-        for(unsigned int i = 0; i<tabPointEntrees.size(); i++)
-            cout<<"Etat "<< tabPointEntrees[i] <<endl;
-    }
+    cout<<endl;
+    cout<<endl;
+}
+
+
+/**
+* Retourne true si il y a un circuit false s'il n'y en a pas
+*/
+bool Graphe::detectionCircuit(){
+
+    // copie des matrices
+    Graphe copieGraphe = *this;
+
+    #if DEBUG == 1
+        cout<<endl;
+        cout<<endl;
+        cout <<"////// DEBUG : "<<endl;
+        cout << "copieGraphe : " <<endl;
+        copieGraphe.displayGraphe();
+        cout <<"////// : DEBUG"<<endl;
+        cout<<endl;
+        cout<<endl;
+    #endif // DEBUG
+
+    /* test de copie (à ustiliser avec un graphe dont la matAdj à false pour [0][0]
+        matAdj[0][0] = true;
+
+        cout<<endl;
+        cout << "111111111111111111"<<endl;
+        displayGraphe();
+        cout<<endl;
+        cout << "2222222222222222"<<endl;
+        copieGraphe.displayGraphe();
     */
-    cout<<endl;
-    cout<<endl;
+
+    // indique s'il n'y a pas de circuit (true), ou s'il y en a un (false)
+    bool pasDeCircuit = false;
+
+
+    // test remise à zero car on fait la recherche dès le début du do while
+    // ( on peut aussi éviter de copier le tabPointEntree dans la copieGraphe, à VOIR)
+    copieGraphe.tabPointEntree = vector<int>();
+
+    // on effectue la recherche tant qu'on trouve des points d'entrée
+    do{
+        // on recherche les points d'entrés sur la matrice copiée
+
+        //cout << "entrée avant" <<endl;
+        //copieGraphe.displayPointEntree();
+        copieGraphe.recherchePointsEntree();
+        //cout << "entrée après" <<endl;
+        //copieGraphe.displayPointEntree();
+
+        // besoin de fixer la taille, vu qu'on supprime en même temps
+        const unsigned int tabPointEntreeSize = copieGraphe.tabPointEntree.size();
+        // on selectionne les lignes qui représentent les points d'entrée dans la matAdj
+        for(unsigned int k = 0; k<tabPointEntreeSize; k++){
+
+            //cout <<"test " <<k<< copieGraphe.tabPointEntree[k] <<endl;
+            for(int j = 0; j<copieGraphe.nbSommet; j++){
+                    // on met à false toutes les colonnes sur la ligne d'un point d'entrée
+                    matAdj[copieGraphe.tabPointEntree[k]][j] = false;
+                    // puis on passe au suivant point d'entrée
+            }
+            // on supprime le point d'entrée du tableau
+            copieGraphe.tabPointEntree.erase(copieGraphe.tabPointEntree.begin());
+        }
+    }while(copieGraphe.tabPointEntree.size() != 0);
+
+
+    //TODO: afficher le circuit
+
+    // lorsqu'on ne trouve pas de points
+    if(copieGraphe.verifMatAdjVide()){
+        pasDeCircuit = false;
+    }
+    pasDeCircuit = true;
+    return pasDeCircuit;
+
+}
+
+bool Graphe::verifMatAdjVide(){
+    for(int i=0; i<this->nbSommet; i++){
+        for(int j = 0; j<this->nbSommet; j++){
+            if(this->matAdj[i][j] != false)
+                return false;
+        }
+    }
+    return true;
+}
+
+void Graphe::niveau1(){
+    // TODO: ajouter un truc du genre if bien importé displayGraphe()
+    displayGraphe();
+    recherchePointsEntree();
+    if(!detectionCircuit())
+        cout << "pas de circuit" <<endl;
+    else
+        cout << "un circuit" <<endl;
 }
 
 

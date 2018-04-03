@@ -33,8 +33,7 @@ int main()
             cin >> fileName;
 
             Graphe graphe(fileName);
-            graphe.displayGraphe();
-            graphe.recherchePointsEntrees();
+            graphe.niveau1();
 
             break;
             }

@@ -303,7 +303,7 @@ bool Graphe::detectionCircuit(){
     }while(copieGraphe.tabPointEntree.size() != 0);
 
 
-    //TODO: afficher le circuit
+    //TODO: afficher le circuit ( les états qui restent dans la matAdj )
 
     // lorsqu'on ne trouve pas de points
     if(copieGraphe.verifMatAdjVide()){

@@ -15,14 +15,38 @@ using namespace std;
 Graphe::Graphe(string fileName) {
     this->fileName = fileName;
     importGraphe(fileName);
-
-
-
-
 }
-Graphe::Graphe(Graphe* autreGraphe) {
-    this->fileName = autreGraphe->fileName;
-    this->importGraphe(fileName);
+
+Graphe::Graphe(Graphe const& autreGraphe) {
+
+    this->fileName = autreGraphe.fileName;
+
+    this->nbSommet = autreGraphe.nbSommet;
+    this->nbArc = autreGraphe.nbArc;
+
+    // créer tableau de booléen 2d   (matrice carrée de hauteur nb sommet)  toutes les cases sont copiées
+    this->matAdj = new bool*[this->nbSommet];
+    for(int i = 0; i < this->nbSommet; i++)
+    {
+        this->matAdj[i] = new bool[this->nbSommet];
+        for(int j = 0; j <this->nbSommet; j++){
+            this->matAdj[i][j] = autreGraphe.matAdj[i][j];
+        }
+    }
+
+    // créer tableau de int 2d  (matrice carrée de hauteur nb sommet) toutes les cases sont copiées
+    this->matInc = new double*[this->nbSommet];
+    for(int i = 0; i < this->nbSommet; i++)
+    {
+        this->matInc[i] = new double[this->nbSommet];
+        for(int j = 0; j <this->nbSommet; j++){
+            matInc[i][j] = autreGraphe.matInc[i][j];
+
+        }
+    }
+
+
+    this->remplirGraphe();
 }
 
 
@@ -39,22 +63,6 @@ void Graphe::importGraphe(string fileName) {
 
         file >> this->nbSommet;
         file >> this->nbArc;
-
-
-        // create a tabEtat with all the states, then we will add the successors
-        for(int i = 0; i<this->nbSommet; i++){
-            tabEtats.push_back(new Etat(i));
-        }
-
-        #if DEBUG == 1
-        cout <<endl;
-        cout << "Les etats presents: " <<endl;
-        for(int i = 0; i<this->nbSommet; i++ ){
-            cout << tabEtats[i]->getNom() << " ";
-        }
-        cout <<endl;
-        cout <<endl;
-        #endif // DEBUG
 
 
 
@@ -85,6 +93,10 @@ void Graphe::importGraphe(string fileName) {
         // remplir matAdj, matInc, tabEtats et tabArc
         int etatDebut, etatFin, poids;
 
+        #if DEBUG == 1
+                cout <<"DEBUG : lecture du fichier txt "<<endl;
+        #endif // DEBUG
+
         for(int i = 0; i < this->nbArc; i++){
 
             file >> etatDebut;
@@ -95,8 +107,6 @@ void Graphe::importGraphe(string fileName) {
 
 
             #if DEBUG == 1
-
-                cout <<"DEBUG"<<endl;
                 cout << "etatDebut: " << etatDebut << " ";
 
                 cout << "etatFin: " << etatFin<< " ";
@@ -110,18 +120,59 @@ void Graphe::importGraphe(string fileName) {
             //remplir une case matInc avec son poids
             matInc[etatDebut][etatFin] = poids;
 
-
-            //we add the successor to the tabEtats
-            tabEtats[etatDebut]->ajoutSuccesseur(etatFin, poids);
-            tabEtats[etatFin]->ajoutPredecesseur(etatDebut, poids);
-
-            //tabEtats
-
-
         }
 
-
         #if DEBUG == 1
+                cout <<": DEBUG "<<endl;
+        #endif // DEBUG
+
+
+    // test
+        remplirGraphe();
+
+        file.close();  // on ferme le fichier
+
+    }
+    else  // sinon
+        cerr << "Impossible d'ouvrir le fichier !" << endl;
+
+}
+
+/**
+*   fonction qui remplit le graphe (tabEtat) à partir de la matrice d'adjacence et de la matrice d'incicdence
+*/
+void Graphe::remplirGraphe(){
+
+    // create a tabEtat with all the states, then we will add the successors
+    for(int i = 0; i<this->nbSommet; i++){
+        tabEtats.push_back(new Etat(i));
+    }
+
+    #if DEBUG == 1
+        cout << endl;
+        cout<< "DEBUG : " <<endl;
+        cout << "Les etats presents: " <<endl;
+        for(int i = 0; i<this->nbSommet; i++ ){
+            cout << tabEtats[i]->getNom() << " ";
+        }
+        cout<<endl;
+        cout<< ": DEBUG" <<endl;
+        cout <<endl;
+    #endif // DEBUG
+
+
+    for(int etatDebut = 0; etatDebut<this->nbSommet; etatDebut++){
+        for(int etatFin = 0; etatFin<this->nbSommet; etatFin++){
+                        //we add the successor to the tabEtats
+            if(matAdj[etatDebut][etatFin]){
+                tabEtats[etatDebut]->ajoutSuccesseur(etatFin, matInc[etatFin][etatDebut]);
+                tabEtats[etatFin]->ajoutPredecesseur(etatDebut, matInc[etatDebut][etatFin]);
+            }
+        }
+    }
+
+
+    #if DEBUG == 1
 
             cout << endl;
             cout << endl;
@@ -155,15 +206,6 @@ void Graphe::importGraphe(string fileName) {
 
         #endif // DEBUG
 
-
-
-
-
-        file.close();  // on ferme le fichier
-
-    }
-    else  // sinon
-        cerr << "Impossible d'ouvrir le fichier !" << endl;
 
 }
 

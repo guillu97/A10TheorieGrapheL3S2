@@ -15,7 +15,6 @@
 
 
 #include "Etat.h"
-#include "Arc.h"
 
 #define DEBUG 1
 
@@ -27,10 +26,10 @@ private:
     std::string fileName;
     int nbSommet;
     int nbArc;
+
     bool** matAdj = NULL;
     double** matInc = NULL;
 
-    std::vector <Arc*> tabArcs;
 
     // En UTILISANT matAdj
     //std::vector <int> tabPointEntrees;
@@ -44,10 +43,12 @@ private:
 
 
 public:
+
     Graphe(std::string fileName);
-    Graphe(Graphe* test);
+    Graphe(Graphe const& autreGraphe);
 
     void importGraphe(std::string fileName);
+    void remplirGraphe();
     void displayGraphe();
     void recherchePointsEntrees();
     void displayPointEntrees();

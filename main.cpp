@@ -32,9 +32,34 @@ int main()
             cout << "Entrer un nom de fichier avec son extension txt (ex: monTexte.txt)"<< endl;
             cin >> fileName;
 
-            Graphe graphe(fileName);
-            graphe.displayGraphe();
-            graphe.recherchePointsEntrees();
+            cout<<endl;
+
+            //Graphe graphe(fileName);
+            //graphe.displayGraphe();
+
+
+            // tests de copie construct
+            Graphe graphe1(fileName);
+            cout << "GRAPHE1"<<endl;
+            graphe1.displayGraphe();
+
+            Graphe autre = graphe1;
+            cout << "GRAPHE AUTRE"<<endl;
+            autre.displayGraphe();
+
+            // mettre matAdj public pour le test
+
+            autre.matAdj[0][1]  = false;
+            autre.matInc[0][1] = 10;
+            cout <<" GRAPHE AUTRE 2 " <<endl;
+            autre.displayGraphe();
+
+            cout<<"GRAPHE1   2"<<endl;
+            graphe1.displayGraphe();
+
+
+
+            //graphe.recherchePointsEntrees();
 
             break;
             }

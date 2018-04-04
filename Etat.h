@@ -28,14 +28,21 @@ private:
 
 
 public:
-    Etat(int nom);
+    Etat(unsigned int nom);
     Etat(Etat& a);
     Etat();
-    void ajoutSuccesseur(int nom, int poids);
-    void ajoutPredecesseur(int nom, int poids);
+    void ajoutSuccesseur(unsigned int nom, int poids);
+    void ajoutPredecesseur(unsigned int nom, int poids);
 
+    // fonction testée au niveau de l'etat, mais pas au niveau du poids
+    void supprSuccesseur(unsigned int nom);
+    int chercherPosSuccesseur(unsigned int nom);
 
-    int getNom(){
+    // fonction testée au niveau de l'etat, mais pas au niveau du poids
+    void supprPredecesseur(unsigned int nom);
+    int chercherPosPredecesseur(unsigned int nom);
+
+    unsigned int getNom(){
         return this->nom;
     }
 

@@ -13,17 +13,17 @@
 #include <limits>
 #include <cmath>
 
-// it is needed to avoid include loop
-class Arc;
 
 class Etat {
 
 private:
     int nom;
     std::vector <Etat*> successeurs;
-    std::vector <Arc*> tabArcsEntrants;
-    std::vector <Arc*> tabArcsSortants;
+    std::vector <Etat*> predecesseurs;
 
+
+    std::vector<int> poidsSuccesseur;
+    std::vector<int> poidsPredecesseur;
 
 
 
@@ -31,9 +31,8 @@ public:
     Etat(int nom);
     Etat(Etat& a);
     Etat();
-    void ajoutSuccesseur(int nom);
-    void ajoutArcEntrants(Arc*);
-    void ajoutArcSortants(Arc*);
+    void ajoutSuccesseur(int nom, int poids);
+    void ajoutPredecesseur(int nom, int poids);
 
 
     int getNom(){
@@ -44,11 +43,8 @@ public:
         return successeurs;
     }
 
-    std::vector <Arc*> getTabArcsEntrants(){
-        return tabArcsEntrants;
-    }
-    std::vector <Arc*> getTabArcsSortants(){
-        return tabArcsSortants;
+    std::vector <Etat*> getPredecesseurs(){
+        return predecesseurs;
     }
 
 

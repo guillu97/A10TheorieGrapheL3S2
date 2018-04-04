@@ -15,17 +15,18 @@ Etat::Etat(Etat& a){
 }
 
 
-void Etat::ajoutSuccesseur(int nom)
+void Etat::ajoutSuccesseur(int nom, int poids)
 {
     this->successeurs.push_back(new Etat(nom));
+    this->poidsSuccesseur.push_back(poids);
 }
 
-void Etat::ajoutArcEntrants(Arc* arc){
-    this->tabArcsEntrants.push_back(arc);
+void Etat::ajoutPredecesseur(int nom, int poids)
+{
+    this->predecesseurs.push_back(new Etat(nom));
+    this->poidsPredecesseur.push_back(poids);
 }
-void Etat::ajoutArcSortants(Arc* arc){
-    this->tabArcsSortants.push_back(arc);
-}
+
 
 
 

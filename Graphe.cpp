@@ -112,23 +112,22 @@ void Graphe::importGraphe(string fileName) {
 
 
             //we add the successor to the tabEtats
-            tabEtats[etatDebut]->ajoutSuccesseur(etatFin);
+            tabEtats[etatDebut]->ajoutSuccesseur(etatFin, poids);
+            tabEtats[etatFin]->ajoutPredecesseur(etatDebut, poids);
 
-            // ajoute les arcs
-            tabArcs.push_back(new Arc(tabEtats[etatDebut], tabEtats[etatFin], poids));
+            //tabEtats
 
-            //ajoute les arcs dans les états
-            tabEtats[etatDebut]->ajoutArcSortants(new Arc(tabEtats[etatDebut], tabEtats[etatFin], poids));
-            tabEtats[etatFin]->ajoutArcEntrants(new Arc(tabEtats[etatFin], tabEtats[etatDebut], poids));
+
         }
+
 
         #if DEBUG == 1
 
             cout << endl;
             cout << endl;
-            cout << "DEBUG" <<endl;
+            cout << "DEBUG : " <<endl;
 
-            cout << "Tous les etats et leurs successeurs: "<<endl;
+            cout << "Tous les etats et leurs successeurs : "<<endl;
             for(int i = 0; i<this->nbSommet; i++){
                 //vector <Etat*> tempTabSuccesseurs = tabEtats[i]->getSuccesseurs();
                 cout << "Etat " << tabEtats[i]->getNom() << " :"<<endl;
@@ -139,42 +138,18 @@ void Graphe::importGraphe(string fileName) {
                 cout <<"]"<<endl;
             }
 
-            cout << endl;
-            cout << endl;
-
-            cout << "Tous les etats et leurs arcs: "<<endl;
-            cout << endl;
+            cout << "Tous les etats et leurs predecesseurs : "<<endl;
             for(int i = 0; i<this->nbSommet; i++){
                 //vector <Etat*> tempTabSuccesseurs = tabEtats[i]->getSuccesseurs();
                 cout << "Etat " << tabEtats[i]->getNom() << " :"<<endl;
-                cout<< "Arcs sortants ("<< tabEtats[i]->getTabArcsSortants().size()<<") : " <<endl<< "[ "<<endl;
-                for(unsigned int j = 0; j<tabEtats[i]->getTabArcsSortants().size(); j++){
-                    tabEtats[i]->getTabArcsSortants()[j]->afficherArc();
+                cout<< "predecesseurs: [ ";
+                for(unsigned int j = 0; j<tabEtats[i]->getPredecesseurs().size(); j++){
+                    cout << tabEtats[i]->getPredecesseurs()[j]->getNom() << " ";;
                 }
                 cout <<"]"<<endl;
-                cout<< "Arcs entrants (" << tabEtats[i]->getTabArcsEntrants().size() <<") : " <<endl<< "[ "<<endl;
-                for(unsigned int j = 0; j<tabEtats[i]->getTabArcsEntrants().size(); j++){
-                    tabEtats[i]->getTabArcsEntrants()[j]->afficherArc();
-                }
-                cout <<"]"<<endl;
-
-                cout << endl;
             }
 
-            cout << endl;
-            cout << endl;
-
-
-            cout << "Tous les arcs: "<<endl;
-            for(int i = 0; i< this->nbArc; i++){
-                //vector <Etat*> tempTabSuccesseurs = tabEtats[i]->getSuccesseurs();
-                cout << "Arc : " <<endl;
-                cout << "Etat debut " << tabArcs[i]->getExtremiteInitiale()->getNom();
-                cout<< " Etat fin " << tabArcs[i]->getExtremiteTerminale()->getNom();
-                cout<< " Poids " << tabArcs[i]->getPoids();
-                cout <<endl;
-            }
-
+            cout<<": DEBUG"<<endl;
             cout << endl;
             cout << endl;
 
@@ -326,6 +301,10 @@ void Graphe::displayPointEntrees(){
     */
     cout<<endl;
     cout<<endl;
+}
+
+void Graphe::niveau1(){
+    displayGraphe();
 }
 
 

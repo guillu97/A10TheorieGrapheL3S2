@@ -52,6 +52,7 @@ public:
     void recherchePointsEntrees();
     void displayPointEntrees();
 
+    void niveau1();
 
 };
 

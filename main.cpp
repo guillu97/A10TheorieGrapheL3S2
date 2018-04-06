@@ -36,11 +36,13 @@ int main()
 
             Graphe graphe(fileName);
             graphe.displayGraphe();
+            graphe.affichageGraphe();
 
 
             cout<<endl;
             cout<<endl;
             graphe.displayEtatToMatriceAdjIncid();
+            graphe.affichageGraphe();
 /*
             // tests de copie construct
             Graphe graphe1(fileName);
@@ -69,7 +71,7 @@ int main()
             cout<<endl;
             cout<<endl;
             graphe.displayEtatToMatriceAdjIncid();
-            graphe.displayEtatToMatriceAdjIncid();
+            graphe.affichageGraphe();
 
             graphe.detectionCircuit();
 

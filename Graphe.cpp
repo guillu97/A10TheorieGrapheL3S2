@@ -317,6 +317,12 @@ void Graphe::affichageGraphe(){
                     cout << tabEtats[i]->successeurs[j]->getNom() << " ";
                 }
                 cout <<"]"<<endl;
+
+                cout<< "PoidsSuccesseurs: [ ";
+                for(unsigned int j = 0; j<tabEtats[i]->successeurs.size(); j++){
+                    cout << tabEtats[i]->poidsSuccesseur[j] << " ";
+                }
+                cout <<"]"<<endl;
             }
 
             cout << "Tous les etats et leurs predecesseurs : "<<endl;
@@ -331,25 +337,6 @@ void Graphe::affichageGraphe(){
             }
 }
 
-void Graphe::displayEtatToMatriceAdjIncid(){
-
-    for(unsigned int i = 0; i < this->tabEtats.size(); i++){
-        std::vector <Etat*> tabSuccesseursSuccesseurs = tabEtats[i]->successeurs;
-        unsigned int k = 0;
-        for(unsigned int j = 0; j < tabEtats.size(); j++){
-            if ( k >= tabSuccesseursSuccesseurs.size())
-                cout << 0 << " ";
-            else if(tabSuccesseursSuccesseurs[k]->getNom() == tabEtats[j]->getNom()){
-                cout << 1 << " ";
-                k++;
-            }
-            else
-                cout << 0 << " ";
-        }
-        cout << endl;
-
-    }
-}
 
 
 /** @brief (one liner)

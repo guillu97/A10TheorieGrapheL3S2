@@ -57,7 +57,6 @@ public:
     void displayEtatToMatriceAdjIncid();
     void recherchePointsEntrees();
     void displayPointEntrees();
-    void displayEtatToMatriceAdjIncid();
 
     void supprEtat(Etat* etat);
     int chercherPosEtatDansTab(Etat* etatSearch, std::vector<Etat*> tabDeRecherche);

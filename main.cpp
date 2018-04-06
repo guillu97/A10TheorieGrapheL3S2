@@ -36,10 +36,12 @@ int main()
 
             Graphe graphe(fileName);
             graphe.displayGraphe();
+
+
             cout<<endl;
             cout<<endl;
-            graphe.affichageGraphe();
-            /*
+            graphe.displayEtatToMatriceAdjIncid();
+/*
             // tests de copie construct
             Graphe graphe1(fileName);
             cout << "GRAPHE1"<<endl;
@@ -59,14 +61,15 @@ int main()
             cout<<"GRAPHE1   2"<<endl;
             graphe1.displayGraphe();
 
+*/
 
-            */
 
             // test suppr etat
             graphe.supprEtat(graphe.tabEtats[0]);
             cout<<endl;
             cout<<endl;
-            graphe.affichageGraphe();
+            graphe.displayEtatToMatriceAdjIncid();
+
 
 
 

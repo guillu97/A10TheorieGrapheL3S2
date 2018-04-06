@@ -53,11 +53,12 @@ std::vector<Etat*> tabEtats;
     void remplirGraphe();
     void displayGraphe();
     void affichageGraphe();
+    void displayEtatToMatriceAdjIncid();
     void recherchePointsEntrees();
     void displayPointEntrees();
 
     void supprEtat(Etat* etat);
-    int chercherPosEtat(Etat* etat);
+    int chercherPosEtatDansTab(Etat* etatSearch, std::vector<Etat*> tabDeRecherche);
     void detectionCircuit();
 
     void niveau1();

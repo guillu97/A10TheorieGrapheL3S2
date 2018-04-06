@@ -165,8 +165,8 @@ void Graphe::remplirGraphe(){
         for(int etatFin = 0; etatFin<this->nbSommet; etatFin++){
                         //we add the successor to the tabEtats
             if(matAdj[etatDebut][etatFin]){
-                tabEtats[etatDebut]->ajoutSuccesseur(etatFin, matInc[etatFin][etatDebut]);
-                tabEtats[etatFin]->ajoutPredecesseur(etatDebut, matInc[etatDebut][etatFin]);
+                tabEtats[etatDebut]->ajoutSuccesseur(tabEtats[etatFin], matInc[etatFin][etatDebut]);
+                tabEtats[etatFin]->ajoutPredecesseur(tabEtats[etatDebut], matInc[etatDebut][etatFin]);
             }
         }
     }
@@ -179,23 +179,23 @@ void Graphe::remplirGraphe(){
             cout << "DEBUG : " <<endl;
 
             cout << "Tous les etats et leurs successeurs : "<<endl;
-            for(int i = 0; i<this->nbSommet; i++){
+            for(unsigned int i = 0; i<this->tabEtats.size(); i++){
                 //vector <Etat*> tempTabSuccesseurs = tabEtats[i]->getSuccesseurs();
                 cout << "Etat " << tabEtats[i]->getNom() << " :"<<endl;
                 cout<< "successeurs: [ ";
-                for(unsigned int j = 0; j<tabEtats[i]->getSuccesseurs().size(); j++){
-                    cout << tabEtats[i]->getSuccesseurs()[j]->getNom() << " ";
+                for(unsigned int j = 0; j<tabEtats[i]->successeurs.size(); j++){
+                    cout << tabEtats[i]->successeurs[j]->getNom() << " ";
                 }
                 cout <<"]"<<endl;
             }
 
             cout << "Tous les etats et leurs predecesseurs : "<<endl;
-            for(int i = 0; i<this->nbSommet; i++){
+            for(unsigned int i = 0; i<this->tabEtats.size(); i++){
                 //vector <Etat*> tempTabSuccesseurs = tabEtats[i]->getSuccesseurs();
                 cout << "Etat " << tabEtats[i]->getNom() << " :"<<endl;
                 cout<< "predecesseurs: [ ";
-                for(unsigned int j = 0; j<tabEtats[i]->getPredecesseurs().size(); j++){
-                    cout << tabEtats[i]->getPredecesseurs()[j]->getNom() << " ";;
+                for(unsigned int j = 0; j<tabEtats[i]->predecesseurs.size(); j++){
+                    cout << tabEtats[i]->predecesseurs[j]->getNom() << " ";;
                 }
                 cout <<"]"<<endl;
             }
@@ -254,28 +254,50 @@ void Graphe::displayGraphe() {
 }
 
 
+
+
 void Graphe::affichageGraphe(){
-        cout << "Tous les etats et leurs successeurs : "<<endl;
-            for(int i = 0; i<this->nbSommet; i++){
+    cout << "Tous les etats et leurs successeurs : "<<endl;
+            for(unsigned int i = 0; i<this->tabEtats.size(); i++){
                 //vector <Etat*> tempTabSuccesseurs = tabEtats[i]->getSuccesseurs();
                 cout << "Etat " << tabEtats[i]->getNom() << " :"<<endl;
                 cout<< "successeurs: [ ";
-                for(unsigned int j = 0; j<tabEtats[i]->getSuccesseurs().size(); j++){
-                    cout << tabEtats[i]->getSuccesseurs()[j]->getNom() << " ";
+                for(unsigned int j = 0; j<tabEtats[i]->successeurs.size(); j++){
+                    cout << tabEtats[i]->successeurs[j]->getNom() << " ";
                 }
                 cout <<"]"<<endl;
             }
 
             cout << "Tous les etats et leurs predecesseurs : "<<endl;
-            for(int i = 0; i<this->nbSommet; i++){
+            for(unsigned int i = 0; i<this->tabEtats.size(); i++){
                 //vector <Etat*> tempTabSuccesseurs = tabEtats[i]->getSuccesseurs();
                 cout << "Etat " << tabEtats[i]->getNom() << " :"<<endl;
                 cout<< "predecesseurs: [ ";
-                for(unsigned int j = 0; j<tabEtats[i]->getPredecesseurs().size(); j++){
-                    cout << tabEtats[i]->getPredecesseurs()[j]->getNom() << " ";;
+                for(unsigned int j = 0; j<tabEtats[i]->predecesseurs.size(); j++){
+                    cout << tabEtats[i]->predecesseurs[j]->getNom() << " ";
                 }
                 cout <<"]"<<endl;
             }
+}
+
+void Graphe::displayEtatToMatriceAdjIncid(){
+
+    for(unsigned int i = 0; i < this->tabEtats.size(); i++){
+        std::vector <Etat*> tabSuccesseursSuccesseurs = tabEtats[i]->successeurs;
+        unsigned int k = 0;
+        for(unsigned int j = 0; j < tabEtats.size(); j++){
+            if ( k >= tabSuccesseursSuccesseurs.size())
+                cout << 0 << " ";
+            else if(tabSuccesseursSuccesseurs[k]->getNom() == tabEtats[j]->getNom()){
+                cout << 1 << " ";
+                k++;
+            }
+            else
+                cout << 0 << " ";
+        }
+        cout << endl;
+
+    }
 }
 
 
@@ -293,7 +315,7 @@ void Graphe::recherchePointsEntrees(){
             for(unsigned int j = 0; j<this->tabEtats.size(); j++){
 
                 // on récupère son tableau de successeurs
-                vector<Etat*>tabSuccesseurs = tabEtats[tabEtats[j]->getNom()]->getSuccesseurs();
+                vector<Etat*>tabSuccesseurs = tabEtats[tabEtats[j]->getNom()]->successeurs;
 
 
                 // on recherche dans le tableau des successeurs de l'état  (tabEtat[tabEtats[j]->getNom()])
@@ -378,16 +400,80 @@ void Graphe::detectionCircuit(){
 }
 
 void Graphe::supprEtat(Etat* etat){
-    tabEtats.erase(tabEtats.begin() + chercherPosEtat(etat));
+    int posEtatInTabEtat = chercherPosEtatDansTab(etat, tabEtats);
+
+
+
+    // /!\ c'est une copie faite pour la recherche de position
+    vector<Etat*> successeurs = tabEtats[posEtatInTabEtat]->successeurs;
+
+    for(unsigned int i = 0; i < successeurs.size(); i++){
+
+        // /!\ c'est une copie faite pour la recherche
+        vector<Etat*> predecesseurDeEtat = successeurs[i]->predecesseurs;
+
+
+        int posEtatInTabPredecesseur = chercherPosEtatDansTab(etat, predecesseurDeEtat);
+
+        if(posEtatInTabPredecesseur != -1){
+            // ici on passe par le vrai tableau et non par la copie
+            tabEtats[posEtatInTabEtat]
+            ->successeurs[i]
+            ->predecesseurs
+            .erase(tabEtats[posEtatInTabEtat]
+                ->successeurs[i]
+                ->predecesseurs.begin()
+                   + posEtatInTabPredecesseur);
+
+
+            tabEtats[posEtatInTabEtat]
+            ->successeurs[i]
+            ->poidsPredecesseur
+            .erase(tabEtats[posEtatInTabEtat]
+                ->successeurs[i]
+                ->poidsPredecesseur.begin()
+                   + posEtatInTabPredecesseur);
+
+        }
+
+        // /!\ c'est une copie faite pour la recherche
+        vector<Etat*> successeurDeEtat = successeurs[i]->successeurs;
+        int posEtatInTabSuccesseur = chercherPosEtatDansTab(etat, successeurDeEtat);
+
+        if(posEtatInTabSuccesseur != -1){
+            // ici on passe par le vrai tableau pet non par la copie
+            tabEtats[posEtatInTabEtat]
+            ->successeurs[i]
+            ->successeurs
+            .erase(tabEtats[posEtatInTabEtat]
+                ->successeurs[i]
+                ->successeurs.begin()
+                   + posEtatInTabSuccesseur);
+
+            tabEtats[posEtatInTabEtat]
+            ->successeurs[i]
+            ->poidsSuccesseur
+            .erase(tabEtats[posEtatInTabEtat]
+                ->successeurs[i]
+                ->poidsSuccesseur.begin()
+                   + posEtatInTabPredecesseur);
+        }
+    }
+
+
+
+    //TODO: ne pas oublier de supprimer les poids aussi
+
+    tabEtats.erase(tabEtats.begin() + posEtatInTabEtat);
 }
 
-int Graphe::chercherPosEtat(Etat* etat){
-    for(unsigned int pos = 0; pos<tabEtats.size(); pos++){
-        if(tabEtats[pos] == etat){
+
+int Graphe::chercherPosEtatDansTab(Etat* etatSearch, vector<Etat*> tabDeRecherche){
+    for(unsigned int pos = 0; pos<tabDeRecherche.size(); pos++){
+        if(tabDeRecherche[pos] == etatSearch){
             return pos;
         }
     }
-    cerr<< "ERREUR DANS chercherPosEtat, l'etat n'a pas été trouvé" <<endl;
     return -1;
 }
 

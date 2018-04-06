@@ -15,15 +15,15 @@ Etat::Etat(Etat& a){
 }
 
 
-void Etat::ajoutSuccesseur(unsigned int nom, int poids)
+void Etat::ajoutSuccesseur(Etat* etat, int poids)
 {
-    this->successeurs.push_back(new Etat(nom));
+    this->successeurs.push_back(etat);
     this->poidsSuccesseur.push_back(poids);
 }
 
-void Etat::ajoutPredecesseur(unsigned int nom, int poids)
+void Etat::ajoutPredecesseur(Etat* etat, int poids)
 {
-    this->predecesseurs.push_back(new Etat(nom));
+    this->predecesseurs.push_back(etat);
     this->poidsPredecesseur.push_back(poids);
 }
 

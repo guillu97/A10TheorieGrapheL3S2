@@ -591,6 +591,7 @@ void Graphe::niveau1(){
     displayGraphe();
 
 
+
     // verification un seul point d'entree
     recherchePointsEntrees();
     if(tabPointEntrees.size() > 1){

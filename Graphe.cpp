@@ -4,7 +4,7 @@
 
 
 #include "Graphe.h"
-
+#define SPACE 3
 
 
 
@@ -253,6 +253,57 @@ void Graphe::displayGraphe() {
 
 }
 
+void Graphe::displayEtatToMatriceAdjIncid(){
+
+    cout << "****MATRICE D'ADJACENCE****" << endl << endl;
+    for(unsigned int j = 0; j < tabEtats.size(); j++)
+        cout << setw(SPACE) << left << tabEtats[j]->getNom();
+    cout << endl;
+    for(unsigned int j = 0; j < tabEtats.size(); j++)
+        cout << "-------";
+    cout << endl;
+    for(unsigned int i = 0; i < this->tabEtats.size(); i++){
+        std::vector <Etat*> tabSuccesseursSuccesseurs = tabEtats[i]->successeurs;
+        unsigned int k = 0;
+        for(unsigned int j = 0; j < tabEtats.size(); j++){
+
+            if ( k >= tabSuccesseursSuccesseurs.size())
+                cout << setw(SPACE) << left << 0;
+            else if(tabSuccesseursSuccesseurs[k]->getNom() == tabEtats[j]->getNom()){
+                cout << setw(SPACE) << left << 1;
+                k++;
+            }
+            else
+                cout << setw(SPACE) << left << 0;
+        }
+        cout << endl;
+    }
+
+    cout << "****MATRICE D'INCIDENCE****" << endl << endl;
+    for(unsigned int j = 0; j < tabEtats.size(); j++)
+        cout << setw(SPACE) << left << tabEtats[j]->getNom();
+    cout << endl;
+    for(unsigned int j = 0; j < tabEtats.size(); j++)
+        cout << "-------";
+    cout << endl;
+    for(unsigned int i = 0; i < this->tabEtats.size(); i++){
+        std::vector <Etat*> tabSuccesseursSuccesseurs = tabEtats[i]->successeurs;
+        unsigned int k = 0;
+        for(unsigned int j = 0; j < tabEtats.size(); j++){
+
+            if ( k >= tabSuccesseursSuccesseurs.size())
+                cout << setw(SPACE) << left << "/";
+            else if(tabSuccesseursSuccesseurs[k]->getNom() == tabEtats[j]->getNom()){
+                cout << setw(SPACE) << left << tabEtats[j]->poidsSuccesseur[k];
+                k++;
+            }
+            else
+                cout << setw(SPACE) << left << "/";
+        }
+        cout << endl;
+    }
+
+}
 
 void Graphe::affichageGraphe(){
         cout << "Tous les etats et leurs successeurs : "<<endl;

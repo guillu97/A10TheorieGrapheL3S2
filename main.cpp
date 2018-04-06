@@ -63,11 +63,11 @@ int main()
             */
 
             // test suppr etat
-            graphe.supprEtat(graphe.tabEtats[0]);
+            //graphe.supprEtat(graphe.tabEtats[0]);
             cout<<endl;
             cout<<endl;
             graphe.affichageGraphe();
-
+            graphe.displayEtatToMatriceAdjIncid();
 
 
             //graphe.recherchePointsEntrees();

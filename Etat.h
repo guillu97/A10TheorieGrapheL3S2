@@ -18,16 +18,18 @@ class Etat {
 
 private:
     int nom;
-    std::vector <Etat*> successeurs;
-    std::vector <Etat*> predecesseurs;
 
 
-    std::vector<int> poidsSuccesseur;
-    std::vector<int> poidsPredecesseur;
+
+
 
 
 
 public:
+    std::vector <Etat*> successeurs;
+    std::vector <Etat*> predecesseurs;
+    std::vector<int> poidsSuccesseur;
+    std::vector<int> poidsPredecesseur;
     Etat(unsigned int nom);
     Etat(Etat& a);
     Etat();

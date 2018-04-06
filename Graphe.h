@@ -7,6 +7,7 @@
 
 #include <string>
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <vector>
 #include <limits>
@@ -55,6 +56,7 @@ std::vector<Etat*> tabEtats;
     void affichageGraphe();
     void recherchePointsEntrees();
     void displayPointEntrees();
+    void displayEtatToMatriceAdjIncid();
 
     void supprEtat(Etat* etat);
     int chercherPosEtat(Etat* etat);

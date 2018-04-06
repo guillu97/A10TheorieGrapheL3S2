@@ -18,6 +18,7 @@ class Etat {
 
 private:
     int nom;
+    int rang = 0;
 
 
 
@@ -30,11 +31,12 @@ public:
     std::vector <Etat*> predecesseurs;
     std::vector<int> poidsSuccesseur;
     std::vector<int> poidsPredecesseur;
+
     Etat(unsigned int nom);
     Etat(Etat& a);
     Etat();
-    void ajoutSuccesseur(unsigned int nom, int poids);
-    void ajoutPredecesseur(unsigned int nom, int poids);
+    void ajoutSuccesseur(Etat* etat, int poids);
+    void ajoutPredecesseur(Etat* etat, int poids);
 
     // fonction testée au niveau de l'etat, mais pas au niveau du poids
     void supprSuccesseur(unsigned int nom);
@@ -48,13 +50,15 @@ public:
         return this->nom;
     }
 
-    std::vector <Etat*> getSuccesseurs(){
-        return successeurs;
+    /*
+    std::vector <Etat*>* getSuccesseurs(){
+        return &successeurs;
     }
 
-    std::vector <Etat*> getPredecesseurs(){
-        return predecesseurs;
+    std::vector <Etat*>* getPredecesseurs(){
+        return &predecesseurs;
     }
+    */
 
 
 };

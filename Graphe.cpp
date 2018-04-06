@@ -251,9 +251,33 @@ void Graphe::displayGraphe() {
 
     cout << endl;
 
-
-
 }
+
+
+void Graphe::affichageGraphe(){
+        cout << "Tous les etats et leurs successeurs : "<<endl;
+            for(int i = 0; i<this->nbSommet; i++){
+                //vector <Etat*> tempTabSuccesseurs = tabEtats[i]->getSuccesseurs();
+                cout << "Etat " << tabEtats[i]->getNom() << " :"<<endl;
+                cout<< "successeurs: [ ";
+                for(unsigned int j = 0; j<tabEtats[i]->getSuccesseurs().size(); j++){
+                    cout << tabEtats[i]->getSuccesseurs()[j]->getNom() << " ";
+                }
+                cout <<"]"<<endl;
+            }
+
+            cout << "Tous les etats et leurs predecesseurs : "<<endl;
+            for(int i = 0; i<this->nbSommet; i++){
+                //vector <Etat*> tempTabSuccesseurs = tabEtats[i]->getSuccesseurs();
+                cout << "Etat " << tabEtats[i]->getNom() << " :"<<endl;
+                cout<< "predecesseurs: [ ";
+                for(unsigned int j = 0; j<tabEtats[i]->getPredecesseurs().size(); j++){
+                    cout << tabEtats[i]->getPredecesseurs()[j]->getNom() << " ";;
+                }
+                cout <<"]"<<endl;
+            }
+}
+
 
 /** @brief (one liner)
   *
@@ -344,6 +368,29 @@ void Graphe::displayPointEntrees(){
     cout<<endl;
     cout<<endl;
 }
+
+void Graphe::detectionCircuit(){
+    Graphe copieGraphe = *this;
+
+    copieGraphe.recherchePointsEntrees();
+
+
+}
+
+void Graphe::supprEtat(Etat* etat){
+    tabEtats.erase(tabEtats.begin() + chercherPosEtat(etat));
+}
+
+int Graphe::chercherPosEtat(Etat* etat){
+    for(unsigned int pos = 0; pos<tabEtats.size(); pos++){
+        if(tabEtats[pos] == etat){
+            return pos;
+        }
+    }
+    cerr<< "ERREUR DANS chercherPosEtat, l'etat n'a pas été trouvé" <<endl;
+    return -1;
+}
+
 
 void Graphe::niveau1(){
     displayGraphe();

@@ -35,7 +35,7 @@ private:
     //std::vector <int> tabPointEntrees;
     std::vector <Etat*> tabPointEntrees;
 
-    std::vector<Etat*> tabEtats;
+
 
 
 
@@ -44,14 +44,21 @@ private:
 
 public:
 
+std::vector<Etat*> tabEtats;
+
     Graphe(std::string fileName);
     Graphe(Graphe const& autreGraphe);
 
     void importGraphe(std::string fileName);
     void remplirGraphe();
     void displayGraphe();
+    void affichageGraphe();
     void recherchePointsEntrees();
     void displayPointEntrees();
+
+    void supprEtat(Etat* etat);
+    int chercherPosEtat(Etat* etat);
+    void detectionCircuit();
 
     void niveau1();
 

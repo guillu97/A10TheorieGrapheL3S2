@@ -18,7 +18,7 @@ class Etat {
 
 private:
     int nom;
-    int rang = 0;
+    int rang;
 
 
 
@@ -48,6 +48,13 @@ public:
 
     unsigned int getNom(){
         return this->nom;
+    }
+
+    void setRang(int newRang){
+        this->rang = newRang;
+    }
+    int getRang(){
+        return this->rang;
     }
 
     /*

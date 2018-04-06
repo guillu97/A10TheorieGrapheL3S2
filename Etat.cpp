@@ -5,9 +5,11 @@ using namespace std;
 
 Etat::Etat(){
     nom = -1;
+    rang = 0;
 }
 Etat::Etat(unsigned int nom) {
     this->nom = nom;
+    this->rang = 0;
 }
 
 Etat::Etat(Etat& a){

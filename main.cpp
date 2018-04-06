@@ -71,7 +71,10 @@ int main()
             graphe.displayEtatToMatriceAdjIncid();
 
             graphe.detectionCircuit();
+            // /!\ à test sur un graphe sans boucle
+            graphe.calcRang();
 
+            graphe.affichageGraphe();
 
 
 

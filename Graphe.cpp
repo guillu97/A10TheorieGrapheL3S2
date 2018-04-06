@@ -278,6 +278,15 @@ void Graphe::affichageGraphe(){
                 }
                 cout <<"]"<<endl;
             }
+
+            cout<<"Tous les etats et leurs rangs : " <<endl;
+            for(unsigned int i = 0; i<this->tabEtats.size(); i++){
+                //vector <Etat*> tempTabSuccesseurs = tabEtats[i]->getSuccesseurs();
+                cout << "Etat " << tabEtats[i]->getNom() << " :"<<endl;
+                cout<< "rang: [";
+                cout<<tabEtats[i]->getRang();
+                cout <<"]"<<endl;
+            }
 }
 
 void Graphe::displayEtatToMatriceAdjIncid(){
@@ -307,13 +316,14 @@ void Graphe::displayEtatToMatriceAdjIncid(){
   */
 void Graphe::recherchePointsEntrees(){
 
-    // cette somme permet de vérifier s'il l'état est présent parmi les successeurs de tous les états
+    // cette somme permet de vérifier si l'état est présent parmi les successeurs de tous les états
     int sum = 0;
     // on va parcourir tout le tableau des états
     for(unsigned int i = 0; i<this->tabEtats.size(); i++){
             sum = 0;
             for(unsigned int j = 0; j<this->tabEtats.size(); j++){
 
+                // /!\ ici tabSuccesseurs est une copie pour la recherche, il ne faut pas l'utiliser pour modifier des valeurs
                 // on récupère son tableau de successeurs
                 vector<Etat*>tabSuccesseurs = tabEtats[tabEtats[j]->getNom()]->successeurs;
 
@@ -488,6 +498,7 @@ bool Graphe::detectionCircuit(){
         }
         copieGraphe.recherchePointsEntrees();
     }
+
     if(copieGraphe.tabEtats.size() == 0){
             // il n'y a pas de circuit
         return false;
@@ -498,17 +509,30 @@ bool Graphe::detectionCircuit(){
         //TODO:  display le graphe pour montrer le circuit
         // (pour la trace / debug)
     }
-
+    // if copieGraphe.tabEtats.size() == 0 and copieGraphe.tabPointEntrees.size() == 0, il n'y a pas de circuit
+    return false;
 
 }
 
 void Graphe::calcRang(){
-    /*
+
     Graphe copieGraphe = *this;
     copieGraphe.recherchePointsEntrees();
     int k = 0;
     while(copieGraphe.tabPointEntrees.size() != 0 && copieGraphe.tabEtats.size() != 0){
+
+
         for(unsigned int i = 0; i<copieGraphe.tabPointEntrees.size(); i++){
+
+            int posPointEntrees = 0;
+            // les tableaux n'ont pas les mêmes indices donc on ne peut pas utiliser chercherPosEtatDansTab()
+            for(unsigned int j = 0; j<this->tabEtats.size(); j++){
+                if(this->tabEtats[j]->getNom() == copieGraphe.tabPointEntrees[i]->getNom())
+                    posPointEntrees = j;
+            }
+
+            this->tabEtats[posPointEntrees]->setRang(k);
+
             // on supprime le point d'entree du graphe copié
             copieGraphe.supprEtat(copieGraphe.tabPointEntrees[i]);
 
@@ -516,8 +540,10 @@ void Graphe::calcRang(){
             copieGraphe.tabPointEntrees.erase(copieGraphe.tabPointEntrees.begin() + i);
         }
         copieGraphe.recherchePointsEntrees();
+
+        k++;
     }
-    */
+
 }
 
 

@@ -36,11 +36,13 @@ int main()
 
             Graphe graphe(fileName);
             graphe.displayGraphe();
+            graphe.affichageGraphe();
 
 
             cout<<endl;
             cout<<endl;
             graphe.displayEtatToMatriceAdjIncid();
+            graphe.affichageGraphe();
 /*
             // tests de copie construct
             Graphe graphe1(fileName);
@@ -65,17 +67,17 @@ int main()
 
 
             // test suppr etat
-            graphe.supprEtat(graphe.tabEtats[0]);
+            //graphe.supprEtat(graphe.tabEtats[0]);
             cout<<endl;
             cout<<endl;
             graphe.displayEtatToMatriceAdjIncid();
+            graphe.affichageGraphe();
 
             graphe.detectionCircuit();
             // /!\ à test sur un graphe sans boucle
             graphe.calcRang();
 
             graphe.affichageGraphe();
-
 
 
             //graphe.recherchePointsEntrees();

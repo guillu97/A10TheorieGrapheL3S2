@@ -12,6 +12,7 @@ Etat::Etat(unsigned int nom) {
 
 Etat::Etat(Etat& a){
     this->nom = a.nom;
+    this->rang = a.rang;
 }
 
 

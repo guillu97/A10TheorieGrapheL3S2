@@ -70,6 +70,8 @@ int main()
             cout<<endl;
             graphe.displayEtatToMatriceAdjIncid();
 
+            graphe.detectionCircuit();
+
 
 
 

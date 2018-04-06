@@ -391,80 +391,72 @@ void Graphe::displayPointEntrees(){
     cout<<endl;
 }
 
-void Graphe::detectionCircuit(){
-    Graphe copieGraphe = *this;
 
-    copieGraphe.recherchePointsEntrees();
-
-
-}
 
 void Graphe::supprEtat(Etat* etat){
     int posEtatInTabEtat = chercherPosEtatDansTab(etat, tabEtats);
 
+    // si on trouve l'etat à supprimer
+    if(posEtatInTabEtat != -1){
+
+        // /!\ c'est une copie faite pour la recherche de position
+        vector<Etat*> successeurs = tabEtats[posEtatInTabEtat]->successeurs;
+
+        for(unsigned int i = 0; i < successeurs.size(); i++){
+
+            // /!\ c'est une copie faite pour la recherche
+            vector<Etat*> predecesseurDeEtat = successeurs[i]->predecesseurs;
 
 
-    // /!\ c'est une copie faite pour la recherche de position
-    vector<Etat*> successeurs = tabEtats[posEtatInTabEtat]->successeurs;
+            int posEtatInTabPredecesseur = chercherPosEtatDansTab(etat, predecesseurDeEtat);
 
-    for(unsigned int i = 0; i < successeurs.size(); i++){
-
-        // /!\ c'est une copie faite pour la recherche
-        vector<Etat*> predecesseurDeEtat = successeurs[i]->predecesseurs;
-
-
-        int posEtatInTabPredecesseur = chercherPosEtatDansTab(etat, predecesseurDeEtat);
-
-        if(posEtatInTabPredecesseur != -1){
-            // ici on passe par le vrai tableau et non par la copie
-            tabEtats[posEtatInTabEtat]
-            ->successeurs[i]
-            ->predecesseurs
-            .erase(tabEtats[posEtatInTabEtat]
+            if(posEtatInTabPredecesseur != -1){
+                // ici on passe par le vrai tableau et non par la copie
+                tabEtats[posEtatInTabEtat]
                 ->successeurs[i]
-                ->predecesseurs.begin()
-                   + posEtatInTabPredecesseur);
+                ->predecesseurs
+                .erase(tabEtats[posEtatInTabEtat]
+                    ->successeurs[i]
+                    ->predecesseurs.begin()
+                       + posEtatInTabPredecesseur);
 
 
-            tabEtats[posEtatInTabEtat]
-            ->successeurs[i]
-            ->poidsPredecesseur
-            .erase(tabEtats[posEtatInTabEtat]
+                tabEtats[posEtatInTabEtat]
                 ->successeurs[i]
-                ->poidsPredecesseur.begin()
-                   + posEtatInTabPredecesseur);
+                ->poidsPredecesseur
+                .erase(tabEtats[posEtatInTabEtat]
+                    ->successeurs[i]
+                    ->poidsPredecesseur.begin()
+                       + posEtatInTabPredecesseur);
 
-        }
+            }
 
-        // /!\ c'est une copie faite pour la recherche
-        vector<Etat*> successeurDeEtat = successeurs[i]->successeurs;
-        int posEtatInTabSuccesseur = chercherPosEtatDansTab(etat, successeurDeEtat);
+            // /!\ c'est une copie faite pour la recherche
+            vector<Etat*> successeurDeEtat = successeurs[i]->successeurs;
+            int posEtatInTabSuccesseur = chercherPosEtatDansTab(etat, successeurDeEtat);
 
-        if(posEtatInTabSuccesseur != -1){
-            // ici on passe par le vrai tableau pet non par la copie
-            tabEtats[posEtatInTabEtat]
-            ->successeurs[i]
-            ->successeurs
-            .erase(tabEtats[posEtatInTabEtat]
+            if(posEtatInTabSuccesseur != -1){
+                // ici on passe par le vrai tableau pet non par la copie
+                tabEtats[posEtatInTabEtat]
                 ->successeurs[i]
-                ->successeurs.begin()
-                   + posEtatInTabSuccesseur);
+                ->successeurs
+                .erase(tabEtats[posEtatInTabEtat]
+                    ->successeurs[i]
+                    ->successeurs.begin()
+                       + posEtatInTabSuccesseur);
 
-            tabEtats[posEtatInTabEtat]
-            ->successeurs[i]
-            ->poidsSuccesseur
-            .erase(tabEtats[posEtatInTabEtat]
+                tabEtats[posEtatInTabEtat]
+                ->successeurs[i]
+                ->poidsSuccesseur
+                .erase(tabEtats[posEtatInTabEtat]
                 ->successeurs[i]
                 ->poidsSuccesseur.begin()
                    + posEtatInTabPredecesseur);
+            }
         }
+
+        tabEtats.erase(tabEtats.begin() + posEtatInTabEtat);
     }
-
-
-
-    //TODO: ne pas oublier de supprimer les poids aussi
-
-    tabEtats.erase(tabEtats.begin() + posEtatInTabEtat);
 }
 
 
@@ -477,9 +469,72 @@ int Graphe::chercherPosEtatDansTab(Etat* etatSearch, vector<Etat*> tabDeRecherch
     return -1;
 }
 
+/**
+* return true s'il y a un circuit
+* return false s'il n'y a pas de circuit
+*/
+bool Graphe::detectionCircuit(){
+    Graphe copieGraphe = *this;
+
+
+    copieGraphe.recherchePointsEntrees();
+    while(copieGraphe.tabPointEntrees.size() != 0 && copieGraphe.tabEtats.size() != 0){
+        for(unsigned int i = 0; i<copieGraphe.tabPointEntrees.size(); i++){
+            // on supprime le point d'entree du graphe copié
+            copieGraphe.supprEtat(copieGraphe.tabPointEntrees[i]);
+
+            // on supprime l'etat du tableau des points d'entrees car on vient de le traité
+            copieGraphe.tabPointEntrees.erase(copieGraphe.tabPointEntrees.begin() + i);
+        }
+        copieGraphe.recherchePointsEntrees();
+    }
+    if(copieGraphe.tabEtats.size() == 0){
+            // il n'y a pas de circuit
+        return false;
+    }else if (copieGraphe.tabPointEntrees.size() == 0){
+        // il y a un circuit
+        return true;
+
+        //TODO:  display le graphe pour montrer le circuit
+        // (pour la trace / debug)
+    }
+
+
+}
+
+void Graphe::calcRang(){
+    /*
+    Graphe copieGraphe = *this;
+    copieGraphe.recherchePointsEntrees();
+    int k = 0;
+    while(copieGraphe.tabPointEntrees.size() != 0 && copieGraphe.tabEtats.size() != 0){
+        for(unsigned int i = 0; i<copieGraphe.tabPointEntrees.size(); i++){
+            // on supprime le point d'entree du graphe copié
+            copieGraphe.supprEtat(copieGraphe.tabPointEntrees[i]);
+
+            // on supprime l'etat du tableau des points d'entrees car on vient de le traité
+            copieGraphe.tabPointEntrees.erase(copieGraphe.tabPointEntrees.begin() + i);
+        }
+        copieGraphe.recherchePointsEntrees();
+    }
+    */
+}
+
+
+
 
 void Graphe::niveau1(){
     displayGraphe();
+
+
+    // verification un seul point d'entree
+    recherchePointsEntrees();
+    if(tabPointEntrees.size() > 1){
+        // ne rien faire
+    }
+    else{
+        // faire
+    }
 }
 
 

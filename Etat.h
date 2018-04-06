@@ -18,7 +18,7 @@ class Etat {
 
 private:
     int nom;
-
+    int rang = 0;
 
 
 

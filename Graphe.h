@@ -44,7 +44,7 @@ private:
 
 public:
 
-std::vector<Etat*> tabEtats;
+    std::vector<Etat*> tabEtats;
 
     Graphe(std::string fileName);
     Graphe(Graphe const& autreGraphe);
@@ -59,7 +59,12 @@ std::vector<Etat*> tabEtats;
 
     void supprEtat(Etat* etat);
     int chercherPosEtatDansTab(Etat* etatSearch, std::vector<Etat*> tabDeRecherche);
-    void detectionCircuit();
+
+
+    //return true s'il y a un circuit
+    //return false s'il n'y a pas de circuit
+    bool detectionCircuit();
+    void calcRang();
 
     void niveau1();
 

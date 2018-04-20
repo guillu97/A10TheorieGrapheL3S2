@@ -29,13 +29,14 @@ private:
     int nbArc;
 
     bool** matAdj = NULL;
-    double** matInc = NULL;
+    int** matInc = NULL;
 
 
     // En UTILISANT matAdj
     //std::vector <int> tabPointEntrees;
     std::vector <Etat*> tabPointEntrees;
 
+    bool importe;
 
 
 
@@ -50,7 +51,7 @@ public:
     Graphe(std::string fileName);
     Graphe(Graphe const& autreGraphe);
 
-    void importGraphe(std::string fileName);
+    bool importGraphe(std::string fileName);
     void remplirGraphe();
     void displayGraphe();
     void affichageGraphe();
@@ -66,6 +67,8 @@ public:
     //return false s'il n'y a pas de circuit
     bool detectionCircuit();
     void calcRang();
+
+    void affichageRang();
 
     void niveau1();
 

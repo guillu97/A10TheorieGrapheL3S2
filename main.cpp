@@ -35,15 +35,10 @@ int main()
             cout<<endl;
 
             Graphe graphe(fileName);
-            graphe.displayGraphe();
-            graphe.affichageGraphe();
 
+            graphe.niveau1();
 
-            cout<<endl;
-            cout<<endl;
-            graphe.displayEtatToMatriceAdjIncid();
-            graphe.affichageGraphe();
-/*
+            /*
             // tests de copie construct
             Graphe graphe1(fileName);
             cout << "GRAPHE1"<<endl;
@@ -64,21 +59,8 @@ int main()
             graphe1.displayGraphe();
 
 */
-
-
-            // test suppr etat
+// test suppr etat
             //graphe.supprEtat(graphe.tabEtats[0]);
-            cout<<endl;
-            cout<<endl;
-            graphe.displayEtatToMatriceAdjIncid();
-            graphe.affichageGraphe();
-
-            graphe.detectionCircuit();
-            // /!\ à test sur un graphe sans boucle
-            graphe.calcRang();
-
-            graphe.affichageGraphe();
-
 
             //graphe.recherchePointsEntrees();
 

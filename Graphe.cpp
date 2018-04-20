@@ -14,7 +14,10 @@ using namespace std;
 
 Graphe::Graphe(string fileName) {
     this->fileName = fileName;
-    importGraphe(fileName);
+    if(importGraphe(fileName))
+        this->importe = true;
+    else
+        this->importe = false;
 }
 
 Graphe::Graphe(Graphe const& autreGraphe) {
@@ -35,10 +38,10 @@ Graphe::Graphe(Graphe const& autreGraphe) {
     }
 
     // créer tableau de int 2d  (matrice carrée de hauteur nb sommet) toutes les cases sont copiées
-    this->matInc = new double*[this->nbSommet];
+    this->matInc = new int*[this->nbSommet];
     for(int i = 0; i < this->nbSommet; i++)
     {
-        this->matInc[i] = new double[this->nbSommet];
+        this->matInc[i] = new int[this->nbSommet];
         for(int j = 0; j <this->nbSommet; j++){
             matInc[i][j] = autreGraphe.matInc[i][j];
 
@@ -50,7 +53,7 @@ Graphe::Graphe(Graphe const& autreGraphe) {
 }
 
 
-void Graphe::importGraphe(string fileName) {
+bool Graphe::importGraphe(string fileName) {
 
     ifstream file(fileName.c_str(), ios::in);  // on ouvre le fichier en lecture, le fichier est dans le même dossier que l'executable
 
@@ -77,12 +80,12 @@ void Graphe::importGraphe(string fileName) {
         }
 
         // créer tableau de int 2d  (matrice carrée de hauteur nb sommet) toutes les cases sont initialisées à 0
-        matInc = new double*[this->nbSommet];
+        matInc = new int*[this->nbSommet];
         for(int i = 0; i < this->nbSommet; i++)
         {
-            matInc[i] = new double[this->nbSommet];
+            matInc[i] = new int[this->nbSommet];
             for(int j = 0; j <this->nbSommet; j++){
-                matInc[i][j] = NAN;
+                matInc[i][j] = 0;
 
             }
         }
@@ -128,13 +131,20 @@ void Graphe::importGraphe(string fileName) {
 
 
     // test
-        remplirGraphe();
+        this->remplirGraphe();
 
         file.close();  // on ferme le fichier
 
     }
-    else  // sinon
+    else{  // sinon
         cerr << "Impossible d'ouvrir le fichier !" << endl;
+        return false;
+    }
+
+    if(this->matAdj && this->matInc)
+        return true;
+    else
+        return false;
 
 }
 
@@ -142,6 +152,7 @@ void Graphe::importGraphe(string fileName) {
 *   fonction qui remplit le graphe (tabEtat) à partir de la matrice d'adjacence et de la matrice d'incicdence
 */
 void Graphe::remplirGraphe(){
+
 
     // create a tabEtat with all the states, then we will add the successors
     for(int i = 0; i<this->nbSommet; i++){
@@ -165,8 +176,8 @@ void Graphe::remplirGraphe(){
         for(int etatFin = 0; etatFin<this->nbSommet; etatFin++){
                         //we add the successor to the tabEtats
             if(matAdj[etatDebut][etatFin]){
-                tabEtats[etatDebut]->ajoutSuccesseur(tabEtats[etatFin], matInc[etatFin][etatDebut]);
-                tabEtats[etatFin]->ajoutPredecesseur(tabEtats[etatDebut], matInc[etatDebut][etatFin]);
+                tabEtats[etatDebut]->ajoutSuccesseur(tabEtats[etatFin], this->matInc[etatDebut][etatFin]);
+                tabEtats[etatFin]->ajoutPredecesseur(tabEtats[etatDebut], this->matInc[etatDebut][etatFin]);
             }
         }
     }
@@ -239,7 +250,7 @@ void Graphe::displayGraphe() {
         // display matInc
         for(int i = 0; i<this->nbSommet; i++){
             for(int j = 0; j<this->nbSommet; j++){
-                if(isnan(matInc[i][j])){
+                if(matInc[i][j] == 0){
                     cout << "/" << " ";
                 }else
                     cout << matInc[i][j] << " ";
@@ -256,6 +267,7 @@ void Graphe::displayGraphe() {
 void Graphe::displayEtatToMatriceAdjIncid(){
 
     cout << "****MATRICE D'ADJACENCE****" << endl << endl;
+    cout << setw(SPACE) << left<< "//" << "| ";
     for(unsigned int j = 0; j < tabEtats.size(); j++)
         cout << setw(SPACE) << left << tabEtats[j]->getNom();
     cout << endl;
@@ -263,8 +275,10 @@ void Graphe::displayEtatToMatriceAdjIncid(){
         cout << "-------";
     cout << endl;
     for(unsigned int i = 0; i < this->tabEtats.size(); i++){
-        std::vector <Etat*> tabSuccesseursSuccesseurs = tabEtats[i]->successeurs;
+        vector <Etat*> tabSuccesseursSuccesseurs = tabEtats[i]->successeurs;
         unsigned int k = 0;
+
+        cout << setw(SPACE) << left << tabEtats[i]->getNom() << "| ";
         for(unsigned int j = 0; j < tabEtats.size(); j++){
 
             if ( k >= tabSuccesseursSuccesseurs.size())
@@ -278,8 +292,9 @@ void Graphe::displayEtatToMatriceAdjIncid(){
         }
         cout << endl;
     }
-
+    cout<<endl;
     cout << "****MATRICE D'INCIDENCE****" << endl << endl;
+    cout << setw(SPACE) << left<< "//" << "| ";
     for(unsigned int j = 0; j < tabEtats.size(); j++)
         cout << setw(SPACE) << left << tabEtats[j]->getNom();
     cout << endl;
@@ -287,14 +302,17 @@ void Graphe::displayEtatToMatriceAdjIncid(){
         cout << "-------";
     cout << endl;
     for(unsigned int i = 0; i < this->tabEtats.size(); i++){
-        std::vector <Etat*> tabSuccesseursSuccesseurs = tabEtats[i]->successeurs;
+        vector <Etat*> tabSuccesseursSuccesseurs = tabEtats[i]->successeurs;
+        vector<int>tabPoidsSuccesseurs = tabEtats[i]->poidsSuccesseur;
         unsigned int k = 0;
+
+        cout << setw(SPACE) << left << tabEtats[i]->getNom() << "| ";
         for(unsigned int j = 0; j < tabEtats.size(); j++){
 
             if ( k >= tabSuccesseursSuccesseurs.size())
                 cout << setw(SPACE) << left << "/";
             else if(tabSuccesseursSuccesseurs[k]->getNom() == tabEtats[j]->getNom()){
-                cout << setw(SPACE) << left << tabEtats[j]->poidsSuccesseur[k];
+                cout << setw(SPACE) << left << tabPoidsSuccesseurs[k];
                 k++;
             }
             else
@@ -308,42 +326,47 @@ void Graphe::displayEtatToMatriceAdjIncid(){
 
 
 void Graphe::affichageGraphe(){
+    cout<<endl;
     cout << "Tous les etats et leurs successeurs : "<<endl;
-            for(unsigned int i = 0; i<this->tabEtats.size(); i++){
-                //vector <Etat*> tempTabSuccesseurs = tabEtats[i]->getSuccesseurs();
-                cout << "Etat " << tabEtats[i]->getNom() << " :"<<endl;
-                cout<< "successeurs: [ ";
-                for(unsigned int j = 0; j<tabEtats[i]->successeurs.size(); j++){
-                    cout << tabEtats[i]->successeurs[j]->getNom() << " ";
-                }
-                cout <<"]"<<endl;
+    for(unsigned int i = 0; i<this->tabEtats.size(); i++){
+        //vector <Etat*> tempTabSuccesseurs = tabEtats[i]->getSuccesseurs();
+        cout << "Etat " << tabEtats[i]->getNom() << " :"<<endl;
+        cout<< "successeurs: [ ";
+        for(unsigned int j = 0; j<tabEtats[i]->successeurs.size(); j++){
+            cout << tabEtats[i]->successeurs[j]->getNom() << " ";
+        }
+        cout <<"]"<<endl;
 
-                cout<< "PoidsSuccesseurs: [ ";
-                for(unsigned int j = 0; j<tabEtats[i]->successeurs.size(); j++){
-                    cout << tabEtats[i]->poidsSuccesseur[j] << " ";
-                }
-                cout <<"]"<<endl;
-            }
+        cout<< "PoidsSuccesseurs: [ ";
+        for(unsigned int j = 0; j<tabEtats[i]->successeurs.size(); j++){
+            cout << tabEtats[i]->poidsSuccesseur[j] << " ";
+        }
+        cout <<"]"<<endl;
+    }
+    cout<<endl;
+    cout << "Tous les etats et leurs predecesseurs : "<<endl;
+    for(unsigned int i = 0; i<this->tabEtats.size(); i++){
+        //vector <Etat*> tempTabSuccesseurs = tabEtats[i]->getSuccesseurs();
+        cout << "Etat " << tabEtats[i]->getNom() << " :"<<endl;
+        cout<< "predecesseurs: [ ";
+        for(unsigned int j = 0; j<tabEtats[i]->predecesseurs.size(); j++){
+            cout << tabEtats[i]->predecesseurs[j]->getNom() << " ";
+        }
+        cout <<"]"<<endl;
+    }
+    cout<<endl;
 
-            cout << "Tous les etats et leurs predecesseurs : "<<endl;
-            for(unsigned int i = 0; i<this->tabEtats.size(); i++){
-                //vector <Etat*> tempTabSuccesseurs = tabEtats[i]->getSuccesseurs();
-                cout << "Etat " << tabEtats[i]->getNom() << " :"<<endl;
-                cout<< "predecesseurs: [ ";
-                for(unsigned int j = 0; j<tabEtats[i]->predecesseurs.size(); j++){
-                    cout << tabEtats[i]->predecesseurs[j]->getNom() << " ";
-                }
-                cout <<"]"<<endl;
-            }
+}
 
-            cout<<"Tous les etats et leurs rangs : " <<endl;
-            for(unsigned int i = 0; i<this->tabEtats.size(); i++){
-                //vector <Etat*> tempTabSuccesseurs = tabEtats[i]->getSuccesseurs();
-                cout << "Etat " << tabEtats[i]->getNom() << " :"<<endl;
-                cout<< "rang: [";
-                cout<<tabEtats[i]->getRang();
-                cout <<"]"<<endl;
-            }
+void Graphe::affichageRang(){
+    cout<<"Tous les etats et leurs rangs : " <<endl;
+    for(unsigned int i = 0; i<this->tabEtats.size(); i++){
+        //vector <Etat*> tempTabSuccesseurs = tabEtats[i]->getSuccesseurs();
+        cout << "Etat " << tabEtats[i]->getNom() << " :"<<endl;
+        cout<< "rang: [";
+        cout<<tabEtats[i]->getRang();
+        cout <<"]"<<endl;
+    }
 }
 
 
@@ -378,11 +401,7 @@ void Graphe::recherchePointsEntrees(){
                 tabPointEntrees.push_back(tabEtats[i]);
             }
     }
-    #if DEBUG == 1
-        displayPointEntrees();
 
-
-    #endif // DEBUG
 
 
     /*
@@ -555,32 +574,62 @@ bool Graphe::detectionCircuit(){
 void Graphe::calcRang(){
 
     Graphe copieGraphe = *this;
-    copieGraphe.recherchePointsEntrees();
-    int k = 0;
-    while(copieGraphe.tabPointEntrees.size() != 0 && copieGraphe.tabEtats.size() != 0){
 
+
+
+    int k = 0;
+
+    #if DEBUG == 1
+        cout<<endl;
+        cout<<"DEBUG:"<<endl;
+        cout<<"Calcul du rang"<<endl;
+    #endif // DEBUG
+
+    while(copieGraphe.tabEtats.size() != 0){
+
+        copieGraphe.recherchePointsEntrees();
+
+        #if DEBUG == 1
+            cout<< "Rang k= " <<k;
+            copieGraphe.displayPointEntrees();
+        #endif // DEBUG
 
         for(unsigned int i = 0; i<copieGraphe.tabPointEntrees.size(); i++){
-
+            // index du point d'entrées dans tabEtats du graphe "this"
             int posPointEntrees = 0;
             // les tableaux n'ont pas les mêmes indices donc on ne peut pas utiliser chercherPosEtatDansTab()
             for(unsigned int j = 0; j<this->tabEtats.size(); j++){
-                if(this->tabEtats[j]->getNom() == copieGraphe.tabPointEntrees[i]->getNom())
+                if(copieGraphe.tabPointEntrees[i]->getNom() == this->tabEtats[j]->getNom() )
                     posPointEntrees = j;
             }
 
+            // on note le rang sur le graphe "this", et non sur le graphe copié
             this->tabEtats[posPointEntrees]->setRang(k);
 
             // on supprime le point d'entree du graphe copié
             copieGraphe.supprEtat(copieGraphe.tabPointEntrees[i]);
 
-            // on supprime l'etat du tableau des points d'entrees car on vient de le traité
-            copieGraphe.tabPointEntrees.erase(copieGraphe.tabPointEntrees.begin() + i);
+
         }
-        copieGraphe.recherchePointsEntrees();
+        unsigned int nbPointEntrees = copieGraphe.tabPointEntrees.size();
+        for(unsigned int i = 0; i<nbPointEntrees; i++){
+            // on supprime les etats du tableau des points d'entrees car on vient de les traiter
+            copieGraphe.tabPointEntrees.pop_back();
+        }
 
         k++;
+
+
+        #if DEBUG == 1
+            cout<< "Graphe apres suppression des points d entrees"<<endl;
+            copieGraphe.displayEtatToMatriceAdjIncid();
+        #endif // DEBUG
     }
+
+    #if DEBUG == 1
+        cout<<":DEBUG"<<endl;
+        cout<<endl;
+    #endif // DEBUG
 
 }
 
@@ -588,18 +637,40 @@ void Graphe::calcRang(){
 
 
 void Graphe::niveau1(){
-    displayGraphe();
+
+    if(this->importe){
+        displayGraphe();
 
 
 
-    // verification un seul point d'entree
-    recherchePointsEntrees();
-    if(tabPointEntrees.size() > 1){
-        // ne rien faire
+        cout<<endl;
+        cout<<endl;
+        this->displayEtatToMatriceAdjIncid();
+        cout<<endl;
+        cout<<endl;
+        this->affichageGraphe();
+
+
+
+
+
+
+
+
+
+        // verification un seul point d'entree
+        recherchePointsEntrees();
+        if(tabPointEntrees.size() == 1){
+            if(!this->detectionCircuit()){
+                    // /!\ à test sur un graphe sans boucle
+                this->calcRang();
+                this->affichageGraphe();
+                this->affichageRang();
+            }
+        }
+
     }
-    else{
-        // faire
-    }
+
 }
 
 

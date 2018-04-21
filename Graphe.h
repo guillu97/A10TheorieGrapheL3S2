@@ -70,7 +70,10 @@ public:
 
     void affichageRang();
 
+    bool verificationPointEntree();
+
     void niveau1();
+    void niveau2();
 
 };
 

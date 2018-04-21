@@ -650,12 +650,65 @@ void Graphe::niveau1(){
         cout<<endl;
         this->affichageGraphe();
 
+        if(!this->detectionCircuit()){
+                // /!\ à test sur un graphe sans boucle
+            this->calcRang();
+            this->affichageGraphe();
+            this->affichageRang();
+        }
+        else
+            cout<<"Il y a un circuit dans ce graphe, le calcul des rangs ne peut pas etre effectue"<<endl;
+    }
+}
+
+
+/**
+*   On parcourt en largeur le graphe afin de vérifier si le point d'entrée
+*   permet d'accéder à tous les sommets
+*/
+bool Graphe::verificationPointEntree(){
+
+
+    vector<Etat*> tabEtatsAVisite = this->tabEtats;
+    vector<Etat*> file;
+    // ici on sait que le graphe n'a qu'un point d'entrée, on l'ajoute à la file
+    file.push_back(tabPointEntrees[0]);
+
+
+    while(file.size() != 0){
+        // on ajoute les successeurs à la file
+        for(unsigned int j=0; j < file[0]->successeurs.size(); j++)
+            file.push_back(file[0]->successeurs[j]);
+
+        for(unsigned int i = 0; i<tabEtatsAVisite.size(); i++){
+            if(tabEtatsAVisite[i] == file[0]){
+                tabEtatsAVisite.erase(file.begin() + i);
+            }
+        }
+
+        // on supprime l'etat de la file
+        file.erase(file.begin());
+    }
+
+    if(tabEtatsAVisite.size() == 0)
+        return true;
+    else
+        return false;
+}
+
+void Graphe::niveau2(){
+
+    if(this->importe){
+        displayGraphe();
 
 
 
-
-
-
+        cout<<endl;
+        cout<<endl;
+        this->displayEtatToMatriceAdjIncid();
+        cout<<endl;
+        cout<<endl;
+        this->affichageGraphe();
 
 
         // verification un seul point d'entree

@@ -48,10 +48,11 @@ public:
 
     std::vector<Etat*> tabEtats;
 
-    Graphe(std::string fileName);
+    Graphe(std::string fileName, int level);
     Graphe(Graphe const& autreGraphe);
 
     bool importGraphe(std::string fileName);
+    bool importContrainte(std::string fileName);
     void remplirGraphe();
     void displayGraphe();
     void affichageGraphe();

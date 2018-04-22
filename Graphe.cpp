@@ -12,12 +12,47 @@
 
 using namespace std;
 
-Graphe::Graphe(string fileName) {
-    this->fileName = fileName;
-    if(importGraphe(fileName))
-        this->importe = true;
-    else
-        this->importe = false;
+Graphe::Graphe(string fileName, int level) {
+    if(level == 1){
+        this->fileName = fileName;
+        if(importGraphe(fileName))
+            this->importe = true;
+        else
+            this->importe = false;
+    }
+    else if (level == 3){
+
+        ifstream file(fileName.c_str(), ios::in);  // on ouvre le fichier en lecture, le fichier est dans le même dossier que l'executable
+        cout << "Contrainte" << endl;
+
+        if(file){
+            int nbrDeSommet;
+            int nbr;
+            int nbr2;
+            file>>nbrDeSommet;
+            cout << nbrDeSommet << endl;
+            cout << "Start" << endl;
+            for (int i = 0; i < nbrDeSommet ; i++)
+            {
+                file >> nbr;
+                file >> nbr2;
+                cout <<" Etat:" <<nbr << " Poid:" << nbr2 << endl;
+            }
+            for(int i = 0; i < nbrDeSommet; i++){
+                int som;
+                file >> som;
+                cout << "Sommet" << som<< " Contrainte: ";
+                int number;
+                file >> number;
+                while(number != 0){
+                    cout << number << " ";
+                    file >> number;
+                }
+                cout << endl;
+            }
+        }
+    }
+
 }
 
 Graphe::Graphe(Graphe const& autreGraphe) {
@@ -148,6 +183,19 @@ bool Graphe::importGraphe(string fileName) {
 
 }
 
+
+bool Graphe::importContrainte(string fileName){
+    ifstream file(fileName.c_str(), ios::in);  // on ouvre le fichier en lecture, le fichier est dans le même dossier que l'executable
+    cout << "Contrainte" << endl;
+    if(file){
+        file >> this->nbSommet;
+        cout << nbSommet;
+        for(int i = 0; i < nbSommet; i++){
+            cout << file << " ";
+            cout << file << endl;
+        }
+    }
+}
 /**
 *   fonction qui remplit le graphe (tabEtat) à partir de la matrice d'adjacence et de la matrice d'incicdence
 */
@@ -640,12 +688,14 @@ void Graphe::niveau1(){
 
     if(this->importe){
         displayGraphe();
+        string a;
 
 
 
         cout<<endl;
         cout<<endl;
         this->displayEtatToMatriceAdjIncid();
+        cin >> a;
         cout<<endl;
         cout<<endl;
         this->affichageGraphe();

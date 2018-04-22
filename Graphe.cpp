@@ -856,7 +856,7 @@ bool Graphe::verificationPointSortie(){
 }
 
 bool Graphe::verificationValeurArcNonNulle(){
-    /*
+
     // on parcourt tous les tableaux de poids, et on vérifie que chaque poids est > 0, s'il ne l'est pas on return false
 
     for(unsigned int i=0; i<this->tabEtats.size(); i++){
@@ -865,13 +865,28 @@ bool Graphe::verificationValeurArcNonNulle(){
                 return false;
         }
     }
-    // on a parcourut tous les
+    // on a parcourut tous les poids, ils sont tous >= 0
     return true;
-    */
+
 }
 
+/**
+*   On vérifie que les arcs partant d'un même sommet ont tous la même valeur
+*/
 bool Graphe::verificationValeurArc(){
 
+    for(unsigned int i=0; i<this->tabEtats.size(); i++){
+
+        int valeurRef = -1;
+        if(this->tabEtats[i]->poidsSuccesseur.size() != 0)
+            valeurRef = this->tabEtats[i]->poidsSuccesseur;
+
+        for(unsigned int j = 0; j<this->tabEtats[i]->poidsSuccesseur.size(); j++){
+            if(this->tabEtats[i]->poidsSuccesseur[j] != valeurRef)
+                return false;
+        }
+    }
+    return true;
 }
 
 void Graphe::niveau2(){
@@ -898,10 +913,17 @@ void Graphe::niveau2(){
                 if(!this->detectionCircuit()){
                     if(verificationPointEntree()){
                         if(verificationPointSortie()){
-                            this->calcRang();
-                            this->affichageGraphe();
-                            this->affichageRang();
-
+                            if(verificationValeurArcNonNulle()){
+                                if(verificationValeurArc()){
+                                    this->calcRang();
+                                    this->affichageGraphe();
+                                    this->affichageRang();
+                                }else{
+                                    cout<<" verificationValeurArc faux!"<<endl;
+                                }
+                            }else{
+                                cout<<"Le graphe contient au moins un arc dont la valeur est negative"<<endl;
+                            }
                         }else{
                             cout<< "Le graphe n'a pas de point de sortie accessible par tous les sommets"<<endl;
                         }

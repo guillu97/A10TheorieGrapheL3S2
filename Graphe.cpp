@@ -879,7 +879,7 @@ bool Graphe::verificationValeurArc(){
 
         int valeurRef = -1;
         if(this->tabEtats[i]->poidsSuccesseur.size() != 0)
-            valeurRef = this->tabEtats[i]->poidsSuccesseur;
+            valeurRef = this->tabEtats[i]->poidsSuccesseur[0];
 
         for(unsigned int j = 0; j<this->tabEtats[i]->poidsSuccesseur.size(); j++){
             if(this->tabEtats[i]->poidsSuccesseur[j] != valeurRef)
@@ -915,6 +915,7 @@ void Graphe::niveau2(){
                         if(verificationPointSortie()){
                             if(verificationValeurArcNonNulle()){
                                 if(verificationValeurArc()){
+                                    cout << "Toutes les proprietes sonts Vraies !";
                                     this->calcRang();
                                     this->affichageGraphe();
                                     this->affichageRang();

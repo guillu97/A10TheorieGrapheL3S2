@@ -12,17 +12,11 @@
 
 using namespace std;
 
-Graphe::Graphe(string fileName) {
-    this->fileName = fileName;
-    if(importGraphe(fileName))
-        this->importe = true;
-    else
-        this->importe = false;
+Graphe::Graphe(){
 }
 
 Graphe::Graphe(Graphe const& autreGraphe) {
 
-    this->fileName = autreGraphe.fileName;
 
     this->nbSommet = autreGraphe.nbSommet;
     this->nbArc = autreGraphe.nbArc;
@@ -54,6 +48,7 @@ Graphe::Graphe(Graphe const& autreGraphe) {
 
 
 bool Graphe::importGraphe(string fileName) {
+
 
     ifstream file(fileName.c_str(), ios::in);  // on ouvre le fichier en lecture, le fichier est dans le même dossier que l'executable
 
@@ -135,16 +130,23 @@ bool Graphe::importGraphe(string fileName) {
 
         file.close();  // on ferme le fichier
 
+
+
     }
     else{  // sinon
         cerr << "Impossible d'ouvrir le fichier !" << endl;
+        this->importe = false;
         return false;
     }
 
-    if(this->matAdj && this->matInc)
+    if(this->matAdj && this->matInc){
+        this->importe = true;
         return true;
-    else
+    }
+    else{
+        this->importe = false;
         return false;
+    }
 
 }
 
@@ -675,19 +677,32 @@ bool Graphe::verificationPointEntree(){
     file.push_back(tabPointEntrees[0]);
 
 
-    while(file.size() != 0){
-        // on ajoute les successeurs à la file
-        for(unsigned int j=0; j < file[0]->successeurs.size(); j++)
-            file.push_back(file[0]->successeurs[j]);
 
-        for(unsigned int i = 0; i<tabEtatsAVisite.size(); i++){
-            if(tabEtatsAVisite[i] == file[0]){
-                tabEtatsAVisite.erase(file.begin() + i);
+    while(file.size() != 0){
+        cout << "TTTTTESSST 1" <<endl;
+        cout << "file size " << file.size() <<endl;
+        if(file[0]->successeurs.size() != 0){
+
+            // on ajoute les successeurs à la file
+            for(unsigned int j=0; j < file[0]->successeurs.size(); j++){
+                cout << "avant file push"<<endl;
+                file.push_back(file[0]->successeurs[j]);
+                cout << "TTTTTESSST 2 j =" <<j <<endl;
+            }
+
+            cout << "entre deux"<<endl;
+
+            for(unsigned int i = 0; i<tabEtatsAVisite.size(); i++){
+                if(tabEtatsAVisite[i] == file[0]){
+                    tabEtatsAVisite.erase(file.begin() + i);
+                    cout << "TTTTTESSST 3 i =" <<i <<endl;
+                }
+                cout << "TTTTTESSST 3 i =" <<i <<endl;
             }
         }
-
         // on supprime l'etat de la file
         file.erase(file.begin());
+
     }
 
     if(tabEtatsAVisite.size() == 0)
@@ -716,9 +731,11 @@ void Graphe::niveau2(){
         if(tabPointEntrees.size() == 1){
             if(!this->detectionCircuit()){
                     // /!\ à test sur un graphe sans boucle
-                this->calcRang();
-                this->affichageGraphe();
-                this->affichageRang();
+                if(verificationPointEntree()){
+                    this->calcRang();
+                    this->affichageGraphe();
+                    this->affichageRang();
+                }
             }
         }
 

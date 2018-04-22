@@ -23,8 +23,6 @@ class Graphe {
 
 private:
 
-
-    std::string fileName;
     int nbSommet;
     int nbArc;
 
@@ -48,7 +46,7 @@ public:
 
     std::vector<Etat*> tabEtats;
 
-    Graphe(std::string fileName);
+    Graphe();
     Graphe(Graphe const& autreGraphe);
 
     bool importGraphe(std::string fileName);

@@ -14,14 +14,14 @@ using namespace std;
 
 Graphe::Graphe(string fileName, int level) {
     this->fileName = fileName;
-    if(level == 1){
-        if(importGraphe(fileName))
+
+    if (level == 3 || level == 4){
+        if(importContrainte(fileName))
             this->importe = true;
         else
             this->importe = false;
-    }
-    else if (level == 3){
-        if(importContrainte(fileName))
+    }else{
+        if(importGraphe(fileName))
             this->importe = true;
         else
             this->importe = false;
@@ -535,6 +535,47 @@ void Graphe::displayPointEntrees(){
     cout<<endl;
 }
 
+void Graphe::recherchePointsSorties(){
+    // cette somme permet de vérifier si l'état est présent parmi les prédécesseurs de tous les états
+    int sum = 0;
+    // on va parcourir tout le tableau des états
+    for(unsigned int i = 0; i<this->tabEtats.size(); i++){
+            sum = 0;
+            for(unsigned int j = 0; j<this->tabEtats.size(); j++){
+
+                // /!\ ici tabPredecesseurs est une copie pour la recherche, il ne faut pas l'utiliser pour modifier des valeurs
+                // on récupère son tableau de predecesseurs
+                vector<Etat*>tabPredecesseurs = tabEtats[tabEtats[j]->getNom()]->predecesseurs;
+
+
+                // on recherche dans le tableau des predecesseurs de l'état  (tabEtat[tabEtats[j]->getNom()])
+                // pour voir si l'état tabEtats[i]->getNom() est présent ou non.
+                // si à la fin du 'for' sum = 0, alors létat n'est pas présent
+                 for(unsigned int k = 0; k< tabPredecesseurs.size(); k++){
+                    if(tabPredecesseurs[k]->getNom() == tabEtats[i]->getNom())
+                        sum++;
+                 }
+            }
+            if(sum == 0){
+                tabPointSorties.push_back(tabEtats[i]);
+            }
+    }
+}
+
+void Graphe::displayPointSorties(){
+    cout<<endl;
+    cout<<endl;
+
+    cout << "Points de sorties"<<endl;
+
+    if(tabPointEntrees.size() == 0)
+        cout<<"Il n y a pas de point de sortie"<<endl;
+    else{
+          for(unsigned int i = 0; i<tabPointSorties.size(); i++)
+            cout<<"Etat "<< tabPointSorties[i]->getNom() <<endl;
+    }
+}
+
 
 
 void Graphe::supprEtat(Etat* etat){
@@ -730,7 +771,6 @@ void Graphe::niveau1(){
         this->affichageGraphe();
 
         if(!this->detectionCircuit()){
-                // /!\ à test sur un graphe sans boucle
             this->calcRang();
             this->affichageGraphe();
             this->affichageRang();
@@ -748,44 +788,90 @@ void Graphe::niveau1(){
 bool Graphe::verificationPointEntree(){
 
 
-    vector<Etat*> tabEtatsAVisite = this->tabEtats;
-    vector<Etat*> file;
-    // ici on sait que le graphe n'a qu'un point d'entrée, on l'ajoute à la file
-    file.push_back(tabPointEntrees[0]);
+    vector<Etat*> tab;
+    // ici on sait que le graphe n'a qu'un point d'entrée, on l'ajoute au tableau
+    tab.push_back(tabPointEntrees[0]);
 
+    unsigned int pointeur = 0;
 
+    while(pointeur < tab.size()){
 
-    while(file.size() != 0){
-        cout << "TTTTTESSST 1" <<endl;
-        cout << "file size " << file.size() <<endl;
-        if(file[0]->successeurs.size() != 0){
-
-            // on ajoute les successeurs à la file
-            for(unsigned int j=0; j < file[0]->successeurs.size(); j++){
-                cout << "avant file push"<<endl;
-                file.push_back(file[0]->successeurs[j]);
-                cout << "TTTTTESSST 2 j =" <<j <<endl;
-            }
-
-            cout << "entre deux"<<endl;
-
-            for(unsigned int i = 0; i<tabEtatsAVisite.size(); i++){
-                if(tabEtatsAVisite[i] == file[0]){
-                    tabEtatsAVisite.erase(file.begin() + i);
-                    cout << "TTTTTESSST 3 i =" <<i <<endl;
-                }
-                cout << "TTTTTESSST 3 i =" <<i <<endl;
+        if(!tab[pointeur]->successeurs.empty()){
+            unsigned int tailleTabSuccesseurs = tab[pointeur]->successeurs.size();
+            // on ajoute les successeurs au tableau
+            for(unsigned int j=0; j < tailleTabSuccesseurs; j++){
+                if(chercherPosEtatDansTab(tab[pointeur]->successeurs[j],tab) == -1)
+                    tab.push_back(tab[pointeur]->successeurs[j]);
             }
         }
-        // on supprime l'etat de la file
-        file.erase(file.begin());
+        pointeur++;
 
     }
+    #if DEBUG == 1
+        cout<<"DEBUG: affichage des etats parcourus lors de la verification des points d'entree"<<endl;
+        for(unsigned int i = 0; i<tab.size(); i++)
+            cout<< "[" <<tab[i]->getNom()<<"]"<<endl;
+        cout<<":DEBUG"<<endl;
+    #endif // DEBUG
 
-    if(tabEtatsAVisite.size() == 0)
+    if((int)tab.size() == this->nbSommet)
         return true;
     else
         return false;
+}
+
+
+
+bool Graphe::verificationPointSortie(){
+    vector<Etat*> tab;
+    // ici on sait que le graphe n'a qu'un point de sortie, on l'ajoute au tableau
+    tab.push_back(tabPointSorties[0]);
+
+    unsigned int pointeur = 0;
+
+    while(pointeur < tab.size()){
+
+        if(!tab[pointeur]->predecesseurs.empty()){
+            unsigned int tailleTabPredecesseur = tab[pointeur]->predecesseurs.size();
+            // on ajoute les predecesseurs au tableau
+            for(unsigned int j=0; j < tailleTabPredecesseur; j++){
+                if(chercherPosEtatDansTab(tab[pointeur]->predecesseurs[j],tab) == -1)
+                    tab.push_back(tab[pointeur]->predecesseurs[j]);
+            }
+        }
+        pointeur++;
+
+    }
+    #if DEBUG == 1
+        cout<<"DEBUG: affichage des etats parcourus lors de la verification"<<endl;
+        for(unsigned int i = 0; i<tab.size(); i++)
+            cout<< "[" <<tab[i]->getNom()<<"]"<<endl;
+        cout<<":DEBUG"<<endl;
+    #endif // DEBUG
+
+    if((int)tab.size() == this->nbSommet)
+        return true;
+    else
+        return false;
+}
+
+bool Graphe::verificationValeurArcNonNulle(){
+    /*
+    // on parcourt tous les tableaux de poids, et on vérifie que chaque poids est > 0, s'il ne l'est pas on return false
+
+    for(unsigned int i=0; i<this->tabEtats.size(); i++){
+        for(unsigned int j = 0; j<this->tabEtats[i]->poidsSuccesseur.size(); j++){
+            if(this->tabEtats[i]->poidsSuccesseur[j] < 0)
+                return false;
+        }
+    }
+    // on a parcourut tous les
+    return true;
+    */
+}
+
+bool Graphe::verificationValeurArc(){
+
 }
 
 void Graphe::niveau2(){
@@ -806,14 +892,30 @@ void Graphe::niveau2(){
         // verification un seul point d'entree
         recherchePointsEntrees();
         if(tabPointEntrees.size() == 1){
-            if(!this->detectionCircuit()){
-                    // /!\ à test sur un graphe sans boucle
-                if(verificationPointEntree()){
-                    this->calcRang();
-                    this->affichageGraphe();
-                    this->affichageRang();
+                // verification un seul point de sortie
+            recherchePointsSorties();
+            if(tabPointSorties.size() == 1){
+                if(!this->detectionCircuit()){
+                    if(verificationPointEntree()){
+                        if(verificationPointSortie()){
+                            this->calcRang();
+                            this->affichageGraphe();
+                            this->affichageRang();
+
+                        }else{
+                            cout<< "Le graphe n'a pas de point de sortie accessible par tous les sommets"<<endl;
+                        }
+                    }else{
+                        cout<< "Le graphe n'a pas de point d'entree ayant acces a tous les sommets"<<endl;
+                    }
+                }else{
+                    cout<< "Il y a un circuit dans le graphe"<<endl;
                 }
+            }else{
+                cout<<"Il y a plusieurs points de sortie dans le graphe"<<endl;
             }
+        }else{
+            cout<<"Il y a plusieurs points d'entree dans le graphe"<<endl;
         }
 
     }

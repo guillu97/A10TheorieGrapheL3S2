@@ -9,22 +9,10 @@ int main()
 {
     int niveau;
     bool toExit = true;
-    Graphe graphe;
     string fileName;
 
     cout << "Projet de Theorie des Graphes" << endl << endl;
 
-    do{
-
-
-        cout << "Bonjour" << endl;
-        cout << "Entrer un nom de fichier avec son extension txt (ex: monTexte.txt)"<< endl;
-        cin >> fileName;
-
-        cout<<endl;
-
-
-    }while(!graphe.importGraphe(fileName));
 
 
     do{
@@ -45,7 +33,11 @@ int main()
         }
         case 1:{
 
+            cout << "Bonjour" << endl;
+            cout << "Entrer un nom de fichier avec son extension txt (ex: monTexte.txt)"<< endl;
+            cin >> fileName;
 
+            cout<<endl;
 
             cout<<endl;
 
@@ -82,6 +74,21 @@ int main()
 
             break;
             }
+        case 2:{
+
+            cout << "Bonjour" << endl;
+            cout << "Entrer un nom de fichier avec son extension txt (ex: monTexte.txt)"<< endl;
+            cin >> fileName;
+
+            cout<<endl;
+
+            cout<<endl;
+
+            Graphe graphe(fileName, 1);
+
+            graphe.niveau2();
+            break;
+        }
         case 3:
             {
                 string fileName;

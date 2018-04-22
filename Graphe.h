@@ -22,7 +22,7 @@
 class Graphe {
 
 private:
-
+    std::string fileName;
     int nbSommet;
     int nbArc;
 
@@ -33,6 +33,7 @@ private:
     // En UTILISANT matAdj
     //std::vector <int> tabPointEntrees;
     std::vector <Etat*> tabPointEntrees;
+    std::vector<Etat*>  tabPointSorties;
 
     bool importe;
 
@@ -55,8 +56,12 @@ public:
     void displayGraphe();
     void affichageGraphe();
     void displayEtatToMatriceAdjIncid();
+
     void recherchePointsEntrees();
     void displayPointEntrees();
+
+    void recherchePointsSorties();
+    void displayPointSorties();
 
     void supprEtat(Etat* etat);
     int chercherPosEtatDansTab(Etat* etatSearch, std::vector<Etat*> tabDeRecherche);
@@ -70,6 +75,10 @@ public:
     void affichageRang();
 
     bool verificationPointEntree();
+    bool verificationPointSortie();
+
+    bool verificationValeurArc();
+    bool verificationValeurArcNonNulle();
 
     void niveau1();
     void niveau2();

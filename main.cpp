@@ -28,8 +28,13 @@ int main()
 
 
     do{
+
         cout <<"Choose your level :"<<endl;
-        cout <<"0)Exit" << endl << "1)Level 1" <<endl<< "2)Level 2" << endl;
+        cout <<"0)Exit" << endl <<
+         "1)Level 1" << endl <<
+         "2)Level 2" << endl <<
+         "3)Level 3" << endl;
+        std::cin.clear();
         cin >> niveau;
 
         switch(niveau){
@@ -41,6 +46,10 @@ int main()
         case 1:{
 
 
+
+            cout<<endl;
+
+            Graphe graphe(fileName, 1);
 
             graphe.niveau1();
 
@@ -73,10 +82,20 @@ int main()
 
             break;
             }
-        case 2:{
-            graphe.niveau2();
+        case 3:
+            {
+                string fileName;
+
+                cout << "Bonjour" << endl;
+                cout << "Entrer un nom de fichier avec son extension txt (ex: monTexte.txt)"<< endl;
+                cin >> fileName;
+
+                cout<<endl;
+
+                Graphe graphe(fileName, 3);
+
+            }
             break;
-        }
         default:{
                 cout << "Please choose a good number" << endl;
                 break;

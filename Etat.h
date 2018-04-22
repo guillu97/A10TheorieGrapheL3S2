@@ -20,8 +20,7 @@ private:
     int nom;
     int rang;
 
-
-
+    //TODO: On devrait mettre un poid pour le niveau 3 !!!!!! Les deux tableaux suivants serait inutiles
 
 
 

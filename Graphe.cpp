@@ -12,11 +12,26 @@
 
 using namespace std;
 
-Graphe::Graphe(){
+Graphe::Graphe(string fileName, int level) {
+    this->fileName = fileName;
+    if(level == 1){
+        if(importGraphe(fileName))
+            this->importe = true;
+        else
+            this->importe = false;
+    }
+    else if (level == 3){
+        if(importContrainte(fileName))
+            this->importe = true;
+        else
+            this->importe = false;
+    }
+
 }
 
 Graphe::Graphe(Graphe const& autreGraphe) {
 
+    this->fileName = autreGraphe.fileName;
 
     this->nbSommet = autreGraphe.nbSommet;
     this->nbArc = autreGraphe.nbArc;
@@ -48,7 +63,6 @@ Graphe::Graphe(Graphe const& autreGraphe) {
 
 
 bool Graphe::importGraphe(string fileName) {
-
 
     ifstream file(fileName.c_str(), ios::in);  // on ouvre le fichier en lecture, le fichier est dans le même dossier que l'executable
 
@@ -150,6 +164,67 @@ bool Graphe::importGraphe(string fileName) {
 
 }
 
+
+bool Graphe::importContrainte(string fileName){
+    ifstream file(fileName.c_str(), ios::in);  // on ouvre le fichier en lecture, le fichier est dans le même dossier que l'executable
+    file>>this->nbSommet;
+    if (!file) return false;
+    // créer tableau de booléen 2d   (matrice carrée de hauteur nb sommet)  toutes les cases sont initialisées à false
+    matAdj = new bool*[this->nbSommet];
+    for(int i = 0; i < this->nbSommet; i++)
+    {
+        matAdj[i] = new bool[this->nbSommet];
+        for(int j = 0; j <this->nbSommet; j++){
+            matAdj[i][j] = false;
+        }
+    }
+
+    // créer tableau de int 2d  (matrice carrée de hauteur nb sommet) toutes les cases sont initialisées à 0
+    matInc = new int*[this->nbSommet];
+    for(int i = 0; i < this->nbSommet; i++)
+    {
+        matInc[i] = new int[this->nbSommet];
+        for(int j = 0; j <this->nbSommet; j++){
+            matInc[i][j] = 0;
+
+        }
+    }
+
+
+    //Tableau qui contient les poids de chaque Etat
+    int* tableauPoid = new int[this->nbSommet];
+    for(int i = 0; i < this->nbSommet; i++){
+        int lEtat;
+        int lePoid;
+        file >> lEtat;
+        file >> lePoid;
+        tableauPoid[lEtat-1] = lePoid;
+    }
+
+    cout << "Contrainte" << endl;
+    for(int i = 0; i < this->nbSommet; i++){
+
+            int lEtat;
+            file >> lEtat;
+            int lePredecesseur;
+            file >> lePredecesseur;
+            cout << "Sommet " << lEtat << "  ";
+            while(lePredecesseur != 0){
+                matAdj[lePredecesseur-1][lEtat-1] = true;
+                matInc[lePredecesseur-1][lEtat-1] = tableauPoid[lePredecesseur-1];
+                cout << lePredecesseur << " ";
+                file >> lePredecesseur;
+
+            }
+            cout << endl;
+
+    }
+
+    this->remplirGraphe();
+    this->displayGraphe();
+    this->displayEtatToMatriceAdjIncid();
+    return true;
+}
 /**
 *   fonction qui remplit le graphe (tabEtat) à partir de la matrice d'adjacence et de la matrice d'incicdence
 */
@@ -642,12 +717,14 @@ void Graphe::niveau1(){
 
     if(this->importe){
         displayGraphe();
+        string a;
 
 
 
         cout<<endl;
         cout<<endl;
         this->displayEtatToMatriceAdjIncid();
+        cin >> a;
         cout<<endl;
         cout<<endl;
         this->affichageGraphe();

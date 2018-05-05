@@ -4,7 +4,7 @@
 
 
 #include "Graphe.h"
-
+#include <fstream>
 
 
 
@@ -78,10 +78,6 @@ void Graphe::importGraphe(string fileName) {
 
         hasBeenImported = true;
 
-
-
-
-
         file.close();  // on ferme le fichier
 
     }
@@ -91,40 +87,68 @@ void Graphe::importGraphe(string fileName) {
 }
 
 void Graphe::displayGraphe() {
-
+    ofstream fichier("A10FargesNomicisioVo.txt", ios::app);
+    // ios::append, pas de suppression du contenu déjà existant, ajout des traces à la suite
     if(hasBeenImported) {
+        if(fichier) // si le fichier d'écriture existe
+        {
+
         cout << "nb sommet: ";
+        fichier << "nb sommet: ";
         cout << this->nbSommet << endl;
+        fichier << this->nbSommet << endl;
 
-        cout << "nb arc: ";
+        cout << "\n" << "nb arc: ";
+        fichier << "\n" << "nb arc: ";
         cout << this->nbArc << endl;
+        fichier << this->nbArc << endl;
 
 
-        cout << "MatAdj: " << endl;
+        cout << "\n" << "MatAdj: " << endl;
+        fichier << "\n" << "MatAdj: " << endl;
 
         // display matAdj
+
         for (int i = 0; i < this->nbSommet; i++) {
             for (int j = 0; j < this->nbSommet; j++) {
                 cout << matAdj[i][j] << " ";
+                fichier << matAdj[i][j];
+                fichier << " ";
             }
             cout << endl;
+            fichier << endl;
         }
 
 
-        cout << "MatInc: " << endl;
+        cout << "\n" << "MatInc: " << endl;
+        fichier << "\n" << "MatInc: " << endl;
 
         // display matInc
+
         for (int i = 0; i < this->nbSommet; i++) {
             for (int j = 0; j < this->nbSommet; j++) {
+
                 if (isnan(matInc[i][j])) {
                     cout << "/" << " ";
-                } else
+                    fichier << "/" << " ";
+                }
+                else
+                {
                     cout << matInc[i][j] << " ";
+                    fichier << matInc[i][j] << " ";
+                }
+
             }
             cout << endl;
+            fichier << endl;
         }
-
         cout << endl;
+        fichier << endl;
+        }
+        else // le fichier d'écriture n'existe pas
+        {
+            cerr << "FATAL ERROR" << endl;
+        }
     }else
         cerr << "the Graphe hasn't been imported" <<endl;
 

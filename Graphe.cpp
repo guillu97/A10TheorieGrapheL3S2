@@ -454,6 +454,7 @@ void Graphe::affichageRang(){
   */
 void Graphe::recherchePointsEntrees(){
 
+/*
     // cette somme permet de vérifier si l'état est présent parmi les successeurs de tous les états
     int sum = 0;
     // on va parcourir tout le tableau des états
@@ -478,35 +479,50 @@ void Graphe::recherchePointsEntrees(){
                 tabPointEntrees.push_back(tabEtats[i]);
             }
     }
+*/
+
+
+    for(unsigned int i = 0; i<tabEtats.size(); i++){
+        if(tabEtats[i]->predecesseurs.empty())
+            tabPointEntrees.push_back(tabEtats[i]);
+    }
 
 
 
-    /*
-     En UTILISANT la matrice d'adjacence
+/*
+    // En UTILISANT la matrice des valeurs
+
     int sum = 0;
-    for(int j = 0; j<this->nbSommet; j++){
+    for(int i = 0; i<this->nbSommet; i++){
         sum = 0;
-        for(int i = 0; i<this->nbSommet; i++){
-            cout<< "mat ["<<i<<"]"<<"["<<j<<"] " << matAdj[i][j] <<endl;
-            if(matAdj[i][j]){
-                    cout<<"test" <<endl;
+        for(int j = 0; j<this->nbSommet; j++){
+            if(matAdj[j][i] == 1){
                 sum++;
             }
         }
-        cout<<endl;
+
+
 
         if(sum == 0){
-            tabPointEntrees.push_back(j);
+            int pos = 0;
+            for(int k = 0; (unsigned int)k<tabEtats.size(); k++){
+                if(tabEtats[k]->getNom() == i){
+                    pos = i;
+                }
+            }
+            tabPointEntrees.push_back(tabEtats[pos]);
         }
     }
-
+*/
     #if DEBUG == 1
+        cout<< "DEBUG:"<<endl;
         displayPointEntrees();
+        cout<< ":DEBUG"<<endl;
 
 
     #endif // DEBUG
 
-    */
+
 }
 
 void Graphe::displayPointEntrees(){
@@ -536,6 +552,8 @@ void Graphe::displayPointEntrees(){
 }
 
 void Graphe::recherchePointsSorties(){
+
+    /*
     // cette somme permet de vérifier si l'état est présent parmi les prédécesseurs de tous les états
     int sum = 0;
     // on va parcourir tout le tableau des états
@@ -560,6 +578,21 @@ void Graphe::recherchePointsSorties(){
                 tabPointSorties.push_back(tabEtats[i]);
             }
     }
+
+    */
+    for(unsigned int i = 0; i<tabEtats.size(); i++){
+        if(tabEtats[i]->successeurs.empty())
+            tabPointSorties.push_back(tabEtats[i]);
+    }
+
+    #if DEBUG == 1
+        cout<< "DEBUG:"<<endl;
+        displayPointSorties();
+        cout<< ":DEBUG"<<endl;
+
+
+    #endif // DEBUG
+
 }
 
 void Graphe::displayPointSorties(){
@@ -751,7 +784,28 @@ void Graphe::calcRang(){
 
 }
 
+void Graphe::affichageRangTab(){
+    cout<<endl;
+    cout<<"Rang des etats:"<<endl;
 
+    // recherche du rang max
+    int rangMax = 0;
+    for(unsigned int i=0; i< tabEtats.size(); i++){
+        if(tabEtats[i]->getRang() > rangMax)
+            rangMax = tabEtats[i]->getRang();
+    }
+
+
+    cout<<"Rang | Etats"<<endl;
+    for(int rang=0; rang<=rangMax; rang++){
+        cout<< setw(SPACE) << left << rang<< "  |";
+        for(unsigned int i=0; i<tabEtats.size(); i++){
+            if(tabEtats[i]->getRang() == rang)
+                cout<< setw(SPACE) << left << tabEtats[i]->getNom()<< "  ";
+        }
+        cout<<endl;
+    }
+}
 
 
 void Graphe::niveau1(){
@@ -889,6 +943,116 @@ bool Graphe::verificationValeurArc(){
     return true;
 }
 
+void Graphe::calcDatePlusTot(){
+    vector<int>file;
+    // ici on sait que le graphe n'a qu'un point d'entrée, on l'ajoute au tableau
+    file.push_back(tabPointEntrees[0]->getNom());
+
+
+
+
+    #if DEBUG == 1
+        cout<<endl;
+        cout<<endl;
+        cout<<"DEBUG: calcul de la date au plus tot"<<endl;
+        int iteration = 0;
+    #endif // DEBUG
+
+    while(!file.empty()){
+
+        #if DEBUG == 1
+            cout<< "-----------------------"<<endl;
+            cout<<"Iteration : "<<iteration<<endl;
+            cout<<"La file avant iteration: "<<endl;
+
+            for(unsigned int i = 0; i<file.size(); i++)
+                cout<<file[i]<< " ";
+            cout<<endl;
+            iteration++;
+
+
+            cout<<endl;
+
+        #endif // DEBUG
+
+            // on cherche l'index de l'etat de la file dans le tabEtats
+
+
+        int pos = 0;
+
+        /*
+        unsigned int i = 0;
+
+
+        while(i != tabEtats.size() && tabEtats[i]->getNom() != pile[pointeur]){
+                i++;
+                pos = i;
+        }
+        */
+
+        for(int i = 0; (unsigned int)i<tabEtats.size(); i++){
+            if(tabEtats[i]->getNom() == file[0]){
+                pos = i;
+            }
+        }
+
+
+        if(!tabEtats[pos]->successeurs.empty()){
+            unsigned int tailleTabSuccesseurs = tabEtats[pos]->successeurs.size();
+
+            int dureeVersSuccesseur = tabEtats[pos]->poidsSuccesseur[0];
+
+            int datePlusTotEtat = tabEtats[pos]->getDatePlusTot();
+
+            // on ajoute les successeurs à la pile
+            for(unsigned int i=0; i < tailleTabSuccesseurs ; i++){
+                int datePlusTotSuccesseur = tabEtats[pos]->successeurs[i]->getDatePlusTot();
+
+                if(datePlusTotEtat + dureeVersSuccesseur >= datePlusTotSuccesseur)
+                    tabEtats[pos]->successeurs[i]->setDatePlusTot(datePlusTotEtat + dureeVersSuccesseur);
+
+                file.push_back(tabEtats[pos]->successeurs[i]->getNom());
+            }
+
+        }
+        file.erase(file.begin());
+        #if DEBUG == 1
+            cout<<endl;
+            cout<<"La file apres iteration: "<<endl;
+
+            for(unsigned int i = 0; i<file.size(); i++)
+                cout<<file[i]<< " ";
+            cout<<endl;
+            cout<<endl;
+            cout<<"apres iteration:";
+            displayDatePlusTot();
+        #endif // DEBUG
+
+    }
+
+    #if DEBUG == 1
+        cout<<":DEBUG"<<endl;
+    #endif // DEBUG
+}
+
+void Graphe::displayDatePlusTot(){
+    cout<<endl;
+    cout<<endl;
+
+
+    cout<< "Dates au plus tot des etats" <<endl;
+    for(unsigned int i=0; i< tabEtats.size(); i++){
+        cout<< setw(SPACE) << left << tabEtats[i]->getNom()<< "  ";
+    }
+    cout<<endl;
+    for(unsigned int i=0; i< tabEtats.size(); i++){
+        cout<< setw(SPACE) << left<< tabEtats[i]->getDatePlusTot() << "  ";
+    }
+    cout<<endl;
+    cout<<endl;
+}
+
+
 void Graphe::niveau2(){
 
     if(this->importe){
@@ -915,10 +1079,18 @@ void Graphe::niveau2(){
                         if(verificationPointSortie()){
                             if(verificationValeurArcNonNulle()){
                                 if(verificationValeurArc()){
+                                    cout<<endl;
+                                    cout<<endl;
                                     cout << "Toutes les proprietes sonts Vraies !";
-                                    this->calcRang();
+                                    cout<<endl;
+                                    cout<<endl;
                                     this->affichageGraphe();
+                                    this->calcRang();
                                     this->affichageRang();
+                                    this->affichageRangTab();
+                                    this->calcDatePlusTot();
+                                    this->displayDatePlusTot();
+
                                 }else{
                                     cout<<" verificationValeurArc faux!"<<endl;
                                 }

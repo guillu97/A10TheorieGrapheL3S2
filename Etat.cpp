@@ -6,15 +6,18 @@ using namespace std;
 Etat::Etat(){
     nom = -1;
     rang = 0;
+    datePlusTot = 0;
 }
 Etat::Etat(unsigned int nom) {
     this->nom = nom;
     this->rang = 0;
+    this->datePlusTot = 0;
 }
 
 Etat::Etat(Etat& a){
     this->nom = a.nom;
     this->rang = a.rang;
+    this->datePlusTot = a.datePlusTot;
 }
 
 
@@ -42,7 +45,7 @@ void Etat::supprSuccesseur(unsigned int nom){
     }
 }
 
-int Etat::chercherPosSuccesseur(unsigned int nom){
+int Etat::chercherPosSuccesseur(int nom){
     for(unsigned int pos = 0; pos<successeurs.size(); pos++){
         if(successeurs[pos]->getNom() == nom){
             return pos;
@@ -64,7 +67,7 @@ void Etat::supprPredecesseur(unsigned int nom){
     }
 }
 
-int Etat::chercherPosPredecesseur(unsigned int nom){
+int Etat::chercherPosPredecesseur(int nom){
     for(unsigned int pos = 0; pos<predecesseurs.size(); pos++){
         if(predecesseurs[pos]->getNom() == nom){
             return pos;

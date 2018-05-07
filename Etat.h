@@ -19,6 +19,7 @@ class Etat {
 private:
     int nom;
     int rang;
+    int datePlusTot;
 
     //TODO: On devrait mettre un poid pour le niveau 3 !!!!!! Les deux tableaux suivants serait inutiles
 
@@ -39,13 +40,13 @@ public:
 
     // fonction testée au niveau de l'etat, mais pas au niveau du poids
     void supprSuccesseur(unsigned int nom);
-    int chercherPosSuccesseur(unsigned int nom);
+    int chercherPosSuccesseur(int nom);
 
     // fonction testée au niveau de l'etat, mais pas au niveau du poids
     void supprPredecesseur(unsigned int nom);
-    int chercherPosPredecesseur(unsigned int nom);
+    int chercherPosPredecesseur(int nom);
 
-    unsigned int getNom(){
+    int getNom(){
         return this->nom;
     }
 
@@ -54,6 +55,14 @@ public:
     }
     int getRang(){
         return this->rang;
+    }
+
+    void setDatePlusTot(int newDatePlusTot){
+        this->datePlusTot = newDatePlusTot;
+    }
+
+    int getDatePlusTot(){
+        return datePlusTot;
     }
 
     /*

@@ -17,7 +17,7 @@
 
 #include "Etat.h"
 
-#define DEBUG 1
+#define DEBUG 0
 
 class Graphe {
 
@@ -73,12 +73,18 @@ public:
     void calcRang();
 
     void affichageRang();
+    // affichage des rangs sous forme d'un tableau (pour la lisibilité)
+    void affichageRangTab();
 
     bool verificationPointEntree();
     bool verificationPointSortie();
 
     bool verificationValeurArc();
     bool verificationValeurArcNonNulle();
+
+    void calcDatePlusTot();
+
+    void displayDatePlusTot();
 
     void niveau1();
     void niveau2();

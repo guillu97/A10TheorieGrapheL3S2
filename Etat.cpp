@@ -7,17 +7,23 @@ Etat::Etat(){
     nom = -1;
     rang = 0;
     datePlusTot = 0;
+    datePlusTard = 0;
+    marge = 0;
 }
 Etat::Etat(unsigned int nom) {
     this->nom = nom;
     this->rang = 0;
     this->datePlusTot = 0;
+    this->datePlusTard = 0;
+    this->marge = 0;
 }
 
 Etat::Etat(Etat& a){
     this->nom = a.nom;
     this->rang = a.rang;
     this->datePlusTot = a.datePlusTot;
+    this->datePlusTard = a.datePlusTard;
+    this->marge = a.marge;
 }
 
 

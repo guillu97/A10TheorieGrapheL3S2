@@ -20,6 +20,8 @@ private:
     int nom;
     int rang;
     int datePlusTot;
+    int datePlusTard;
+    int marge;
 
     //TODO: On devrait mettre un poid pour le niveau 3 !!!!!! Les deux tableaux suivants serait inutiles
 
@@ -63,6 +65,22 @@ public:
 
     int getDatePlusTot(){
         return datePlusTot;
+    }
+
+    void setDatePlusTard(int newDatePlusTard){
+        this->datePlusTard = newDatePlusTard;
+    }
+
+    int getDatePlusTard(){
+        return datePlusTard;
+    }
+
+    void setMarge(int newMarge){
+        this->marge = newMarge;
+    }
+
+    int getMarge(){
+        return marge;
     }
 
     /*

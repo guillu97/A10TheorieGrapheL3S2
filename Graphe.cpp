@@ -1004,7 +1004,7 @@ void Graphe::calcDatePlusTot(){
 
             int datePlusTotEtat = tabEtats[pos]->getDatePlusTot();
 
-            // on ajoute les successeurs à la pile
+            // on ajoute les successeurs à la file
             for(unsigned int i=0; i < tailleTabSuccesseurs ; i++){
                 int datePlusTotSuccesseur = tabEtats[pos]->successeurs[i]->getDatePlusTot();
 
@@ -1035,6 +1035,8 @@ void Graphe::calcDatePlusTot(){
     #endif // DEBUG
 }
 
+
+
 void Graphe::displayDatePlusTot(){
     cout<<endl;
     cout<<endl;
@@ -1052,6 +1054,164 @@ void Graphe::displayDatePlusTot(){
     cout<<endl;
 }
 
+void Graphe::calcDatePlusTard(float pourcentageDatePlusTard){
+    vector<int>file;
+
+
+
+    int datePlusTardOmega = 0;
+    for(unsigned int i=0; i<tabEtats.size(); i++){
+        if(datePlusTardOmega < tabEtats[i]->getDatePlusTot())
+            datePlusTardOmega = tabEtats[i]->getDatePlusTot() * pourcentageDatePlusTard;
+    }
+
+
+    // toutes les dates au plus tard des etats sont mises à la date d'omega
+    for(unsigned int i=0; i<tabEtats.size(); i++){
+        tabEtats[i]->setDatePlusTard(datePlusTardOmega);
+    }
+
+
+        // ici on sait que le graphe n'a qu'un point dde sortie, on l'ajoute au tableau
+        // on met la date au plus tard du projet sur omega
+    tabPointSorties[0]->setDatePlusTard(datePlusTardOmega);
+
+
+    // on met omega dans la file
+    file.push_back(tabPointSorties[0]->getNom());
+
+    #if DEBUG == 1
+        cout<<endl;
+        cout<<endl;
+        cout<<"DEBUG: calcul de la date au plus tard"<<endl;
+        int iteration = 0;
+    #endif // DEBUG
+
+    while(!file.empty()){
+
+        #if DEBUG == 1
+            cout<< "-----------------------"<<endl;
+            cout<<"Iteration : "<<iteration<<endl;
+            cout<<"La file avant iteration: "<<endl;
+
+            for(unsigned int i = 0; i<file.size(); i++)
+                cout<<file[i]<< " ";
+            cout<<endl;
+            iteration++;
+
+
+            cout<<endl;
+
+        #endif // DEBUG
+
+            // on cherche l'index de l'etat de la file dans le tabEtats
+
+
+        int pos = 0;
+
+        /*
+        unsigned int i = 0;
+
+
+        while(i != tabEtats.size() && tabEtats[i]->getNom() != pile[pointeur]){
+                i++;
+                pos = i;
+        }
+        */
+
+
+        for(int i = 0; (unsigned int)i<tabEtats.size(); i++){
+            if(tabEtats[i]->getNom() == file[0]){
+                pos = i;
+            }
+        }
+
+
+        if(!tabEtats[pos]->predecesseurs.empty()){
+            unsigned int tailleTabPredecesseurs = tabEtats[pos]->predecesseurs.size();
+
+
+
+
+            int datePlusTardEtat = tabEtats[pos]->getDatePlusTard();
+
+
+            // on ajoute les predecesseurs à la file
+            for(unsigned int i=0; i < tailleTabPredecesseurs ; i++){
+
+                int dureeVersPredecesseur = tabEtats[pos]->poidsPredecesseur[i];
+                int datePlustardPredecesseur = tabEtats[pos]->predecesseurs[i]->getDatePlusTard();
+
+                if(datePlusTardEtat - dureeVersPredecesseur <= datePlustardPredecesseur)
+                    tabEtats[pos]->predecesseurs[i]->setDatePlusTard(datePlusTardEtat - dureeVersPredecesseur);
+
+                file.push_back(tabEtats[pos]->predecesseurs[i]->getNom());
+            }
+
+        }
+        file.erase(file.begin());
+        #if DEBUG == 1
+            cout<<endl;
+            cout<<"La file apres iteration: "<<endl;
+
+            for(unsigned int i = 0; i<file.size(); i++)
+                cout<<file[i]<< " ";
+            cout<<endl;
+            cout<<endl;
+            cout<<"apres iteration:";
+            displayDatePlusTard();
+        #endif // DEBUG
+
+    }
+
+    #if DEBUG == 1
+        cout<<":DEBUG"<<endl;
+    #endif // DEBUG
+
+}
+
+void Graphe::displayDatePlusTard(){
+    cout<<endl;
+    cout<<endl;
+
+
+    cout<< "Dates au plus tard des etats" <<endl;
+    for(unsigned int i=0; i< tabEtats.size(); i++){
+        cout<< setw(SPACE) << left << tabEtats[i]->getNom()<< "  ";
+    }
+    cout<<endl;
+    for(unsigned int i=0; i< tabEtats.size(); i++){
+        cout<< setw(SPACE) << left<< tabEtats[i]->getDatePlusTard() << "  ";
+    }
+    cout<<endl;
+    cout<<endl;
+}
+
+
+void Graphe::calcMarges(){
+
+    for(unsigned int i=0; i<tabEtats.size(); i++){
+        tabEtats[i]->setMarge(tabEtats[i]->getDatePlusTard() - tabEtats[i]->getDatePlusTot());
+    }
+
+}
+
+void Graphe::affichageMarge(){
+    cout<<endl;
+    cout<<endl;
+
+
+    cout<< "Marges" <<endl;
+    for(unsigned int i=0; i< tabEtats.size(); i++){
+        cout<< setw(SPACE) << left << tabEtats[i]->getNom()<< "  ";
+    }
+    cout<<endl;
+    for(unsigned int i=0; i< tabEtats.size(); i++){
+        cout<< setw(SPACE) << left<< tabEtats[i]->getMarge() << "  ";
+    }
+    cout<<endl;
+    cout<<endl;
+}
 
 void Graphe::niveau2(){
 
@@ -1090,6 +1250,22 @@ void Graphe::niveau2(){
                                     this->affichageRangTab();
                                     this->calcDatePlusTot();
                                     this->displayDatePlusTot();
+
+                                    // 1 signifie 100 pourcents
+                                    this->calcDatePlusTard(1);
+                                    this->displayDatePlusTard();
+
+                                    this->calcMarges();
+                                    this->affichageMarge();
+
+                                    cout<< "Calcul des dates avec la date au plus tard de fin de projet a 110 pourcent de sa date au plus tot " <<endl;
+
+                                    // 1,10 signifie 110 pourcents
+                                    this->calcDatePlusTard(1.10);
+                                    this->displayDatePlusTard();
+                                    this->calcMarges();
+                                    this->affichageMarge();
+
 
                                 }else{
                                     cout<<" verificationValeurArc faux!"<<endl;

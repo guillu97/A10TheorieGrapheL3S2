@@ -82,9 +82,22 @@ public:
     bool verificationValeurArc();
     bool verificationValeurArcNonNulle();
 
-    void calcDatePlusTot();
 
+    void calcDatePlusTot();
     void displayDatePlusTot();
+
+    /**
+    * @param pourcentageDatePlusTard le pourcentage pour la date au plus tard de fin de projet égal
+    * à certain poucentage de sa date au plus tôt
+    * (ici le pourcentage est juste un rapport, généralement on appelera cette fonction avec un nombre entre 1 et 2,
+    * ce qui équivaut à 100 à 200 pourcents
+    * (si pourcentagDatePlusTard = 1, date au plus tard du projet est égale à sa date au plus tot)
+    */
+    void calcDatePlusTard(float pourcentageDatePlusTard);
+    void displayDatePlusTard();
+
+    void calcMarges();
+    void affichageMarge();
 
     void niveau1();
     void niveau2();

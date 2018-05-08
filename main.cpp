@@ -100,6 +100,7 @@ int main()
                 cout<<endl;
 
                 Graphe graphe(fileName, 3);
+                graphe.niveau3();
 
             }
             break;

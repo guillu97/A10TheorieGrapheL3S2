@@ -52,6 +52,10 @@ public:
         return this->nom;
     }
 
+    void setNom(int newNom){
+        this->nom = newNom;
+    }
+
     void setRang(int newRang){
         this->rang = newRang;
     }

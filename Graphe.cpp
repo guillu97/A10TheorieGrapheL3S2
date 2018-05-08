@@ -15,6 +15,9 @@ using namespace std;
 Graphe::Graphe(string fileName, int level) {
     this->fileName = fileName;
 
+    this->nbSommet = 0;
+    this->nbArc = 0;
+
     if (level == 3 || level == 4){
         if(importContrainte(fileName))
             this->importe = true;
@@ -397,6 +400,63 @@ void Graphe::displayEtatToMatriceAdjIncid(){
         }
         cout << endl;
     }
+
+}
+
+bool** Graphe::grapheToMatAdj(){
+
+    bool** tempMatAdj = NULL;
+
+        // créer tableau de booléen 2d   (matrice carrée de hauteur nb sommet)  toutes les cases sont initialisées à false
+    tempMatAdj = new bool*[this->nbSommet];
+    for(int i = 0; i < this->nbSommet; i++)
+    {
+        tempMatAdj[i] = new bool[this->nbSommet];
+        for(int j = 0; j <this->nbSommet; j++){
+            tempMatAdj[i][j] = false;
+        }
+    }
+
+    for(unsigned int i = 0; i < this->tabEtats.size(); i++){
+        vector <Etat*> tabSuccesseurs = tabEtats[i]->successeurs;
+
+        int nomEtat =  tabEtats[i]->getNom();
+        for(unsigned int j = 0; j < tabSuccesseurs.size(); j++){
+            tempMatAdj[nomEtat][tabSuccesseurs[j]->getNom()] = true;
+        }
+    }
+
+    return tempMatAdj;
+
+}
+
+int** Graphe::grapheToMatInc(){
+
+    int** tempMatInc = NULL;
+
+    // créer tableau de int 2d  (matrice carrée de hauteur nb sommet) toutes les cases sont initialisées à 0
+    tempMatInc = new int*[this->nbSommet];
+    for(int i = 0; i < this->nbSommet; i++)
+    {
+        tempMatInc[i] = new int[this->nbSommet];
+        for(int j = 0; j <this->nbSommet; j++){
+            tempMatInc[i][j] = 0;
+
+        }
+    }
+
+
+    for(unsigned int i = 0; i < this->tabEtats.size(); i++){
+        vector <Etat*> tabSuccesseurs = tabEtats[i]->successeurs;
+        vector <int> tabPoidsSuccesseurs = tabEtats[i]->poidsSuccesseur;
+
+        int nomEtat =  tabEtats[i]->getNom();
+        for(unsigned int j = 0; j < tabSuccesseurs.size(); j++){
+            tempMatInc[nomEtat][tabSuccesseurs[j]->getNom()] = tabPoidsSuccesseurs[j];
+        }
+    }
+
+    return tempMatInc;
 
 }
 
@@ -1258,7 +1318,9 @@ void Graphe::niveau2(){
                                     this->calcMarges();
                                     this->affichageMarge();
 
-                                    cout<< "Calcul des dates avec la date au plus tard de fin de projet a 110 pourcent de sa date au plus tot " <<endl;
+                                    cout<<endl;
+                                    cout<<endl;
+                                    cout<< "Calcul des dates avec la date au plus tard de fin de projet a 110 pourcents de sa date au plus tot " <<endl;
 
                                     // 1,10 signifie 110 pourcents
                                     this->calcDatePlusTard(1.10);
@@ -1290,6 +1352,249 @@ void Graphe::niveau2(){
         }
 
     }
+
+}
+
+void Graphe::creerPointEntree(){
+
+    // on assume que le tableau des points d'entrees a été créé,
+    // le graphe a été importé en mémoire
+
+
+
+
+    // le nom des etats commence à 0, or 0 c'est alpha, donc on ajoute +1 à chaque nom
+    for(unsigned int i=0; i<tabEtats.size(); i++){
+        tabEtats[i]->setNom(tabEtats[i]->getNom() + 1);
+    }
+
+    Etat* alpha = new Etat(0);
+
+    for(unsigned int i=0; i<tabPointEntrees.size(); i++){
+            // ajout des successeurs de alpha
+        alpha->ajoutSuccesseur(tabPointEntrees[i], 0);
+        // ajout des predecesseurs vers alpha
+        tabPointEntrees[i]->ajoutPredecesseur(alpha,0);
+    }
+
+    tabEtats.insert(tabEtats.begin(), alpha);
+
+    // nouveau tableau des points d'entrees
+    tabPointEntrees.erase(tabPointEntrees.begin(), tabPointEntrees.end());
+    tabPointEntrees.push_back(alpha);
+
+
+
+    for(int i=0; i<this->nbSommet; i++)
+        delete matAdj[i];
+    delete matAdj;
+
+    for(int i=0; i<this->nbSommet; i++)
+        delete matInc[i];
+    delete matInc;
+
+
+
+    this->nbSommet++;
+
+    this->matAdj = grapheToMatAdj();
+
+    this->matInc = grapheToMatInc();
+
+
+
+
+
+    #if DEBUG == 1
+        cout<< "DEBUG:"<<endl;
+        cout<<"Nouveau graphe avec le point d'entree alpha ajoute (nom: 0): "<<endl;
+        displayEtatToMatriceAdjIncid();
+        cout<<"Créer point d'entree, creation des matrices a partir du nouveau graphe"<<endl;
+        displayGraphe();
+        cout<< ":DEBUG"<<endl;
+    #endif // DEBUG
+
+
+
+}
+
+
+void Graphe::creerPointSortie(){
+
+    // on assume que le tableau des points de sorties a été créé,
+    // le graphe a été importé en mémoire
+    // on a déjà ajouté un point d'entrée
+
+    int nomOmega = this->nbSommet;
+
+
+    Etat* omega = new Etat(nomOmega);
+
+
+
+    for(unsigned int i=0; i<tabPointSorties.size(); i++){
+
+        // ajout des predecesseurs d'omega
+        omega->ajoutPredecesseur(tabPointSorties[i], 0);
+
+        // ajout des predecesseurs vers omega
+        tabPointSorties[i]->ajoutSuccesseur(omega,0);
+    }
+
+
+
+
+    tabEtats.insert(tabEtats.end(), omega);
+
+    // nouveau tableau des points de sortie
+    tabPointSorties.erase(tabPointSorties.begin(), tabPointSorties.end());
+    tabPointSorties.push_back(omega);
+
+
+
+
+
+    // libere les matrices
+    for(int i=0; i<this->nbSommet; i++)
+        delete matAdj[i];
+    delete matAdj;
+
+    for(int i=0; i<this->nbSommet; i++)
+        delete matInc[i];
+    delete matInc;
+
+
+
+    this->nbSommet++;
+
+    // nouvelle matrice d'adjacence
+    this->matAdj = grapheToMatAdj();
+
+
+    // nouvelle matrice d'incidence
+    this->matInc = grapheToMatInc();
+
+
+
+
+
+    #if DEBUG == 1
+        cout<< "DEBUG:"<<endl;
+        cout<<"Nouveau graphe avec le point de sortie omega ajoute (nom:" << this->nbSommet - 2<< "): "<<endl;
+        displayEtatToMatriceAdjIncid();
+        cout<<"Créer point de sortie, creation des matrices a partir du nouveau graphe"<<endl;
+        displayGraphe();
+        cout<< ":DEBUG"<<endl;
+    #endif // DEBUG
+
+
+
+}
+
+void Graphe::niveau3(){
+
+    if(this->importe){
+
+         cout<< "Apres import"<<endl;
+
+        displayGraphe();
+
+
+
+        cout<<endl;
+        cout<<endl;
+        this->displayEtatToMatriceAdjIncid();
+        cout<<endl;
+        cout<<endl;
+        this->affichageGraphe();
+
+
+        // verification un seul point d'entree
+        recherchePointsEntrees();
+        displayPointEntrees();
+        if(tabPointEntrees.size() > 1){
+            cout<<"Creation d'un point d'entree alpha (nom: 0)"<<endl;
+            this->creerPointEntree();
+            displayEtatToMatriceAdjIncid();
+            displayPointEntrees();
+        }
+
+
+
+        if(tabPointEntrees.size() == 1){
+                // verification un seul point de sortie
+            recherchePointsSorties();
+            displayPointSorties();
+            if(tabPointSorties.size() > 1){
+                cout<<"Creation d'un point de sortie omega (nom:" << this->nbSommet<<")"<<endl;
+                this->creerPointSortie();
+                displayEtatToMatriceAdjIncid();
+                displayPointSorties();
+                cout<<endl;
+                cout<<endl;
+            }
+
+            if(tabPointSorties.size() == 1){
+                if(!this->detectionCircuit()){
+                    if(verificationPointEntree()){
+                        if(verificationPointSortie()){
+                            if(verificationValeurArcNonNulle()){
+                                if(verificationValeurArc()){
+                                    cout<<endl;
+                                    cout<<endl;
+                                    cout << "Toutes les proprietes sonts Vraies !";
+                                    cout<<endl;
+                                    cout<<endl;
+                                    this->affichageGraphe();
+                                    this->calcRang();
+                                    this->affichageRang();
+                                    this->affichageRangTab();
+                                    this->calcDatePlusTot();
+                                    this->displayDatePlusTot();
+
+                                    // 1 signifie 100 pourcents
+                                    this->calcDatePlusTard(1);
+                                    this->displayDatePlusTard();
+
+                                    this->calcMarges();
+                                    this->affichageMarge();
+
+                                    cout<<endl;
+                                    cout<<endl;
+                                    cout<< "Calcul des dates avec la date au plus tard de fin de projet a 110 pourcents de sa date au plus tot " <<endl;
+
+                                    // 1,10 signifie 110 pourcents
+                                    this->calcDatePlusTard(1.10);
+                                    this->displayDatePlusTard();
+                                    this->calcMarges();
+                                    this->affichageMarge();
+
+
+                                }else{
+                                    cout<<" verificationValeurArc faux!"<<endl;
+                                }
+                            }else{
+                                cout<<"Le graphe contient au moins un arc dont la valeur est negative"<<endl;
+                            }
+                        }else{
+                            cout<< "Le graphe n'a pas de point de sortie accessible par tous les sommets"<<endl;
+                        }
+                    }else{
+                        cout<< "Le graphe n'a pas de point d'entree ayant acces a tous les sommets"<<endl;
+                    }
+                }else{
+                    cout<< "Il y a un circuit dans le graphe"<<endl;
+                }
+            }else{
+                cout<<"Il y a plusieurs points de sortie dans le graphe"<<endl;
+            }
+        }else{
+            cout<<"Il y a plusieurs points d'entree dans le graphe"<<endl;
+
+        }
+
+    }
+
 
 }
 

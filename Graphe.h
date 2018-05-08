@@ -57,6 +57,10 @@ public:
     void affichageGraphe();
     void displayEtatToMatriceAdjIncid();
 
+
+    bool** grapheToMatAdj();
+    int** grapheToMatInc();
+
     void recherchePointsEntrees();
     void displayPointEntrees();
 
@@ -99,8 +103,12 @@ public:
     void calcMarges();
     void affichageMarge();
 
+    void creerPointEntree();
+    void creerPointSortie();
+
     void niveau1();
     void niveau2();
+    void niveau3();
 
 };
 

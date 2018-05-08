@@ -21,7 +21,9 @@ int main()
         cout <<"0)Exit" << endl <<
          "1)Level 1" << endl <<
          "2)Level 2" << endl <<
-         "3)Level 3" << endl;
+         "3)Level 3" << endl <<
+         "4)Level 4" << endl;
+
         std::cin.clear();
         cin >> niveau;
 
@@ -101,6 +103,21 @@ int main()
 
                 Graphe graphe(fileName, 3);
                 graphe.niveau3();
+
+            }
+            break;
+        case 4:
+            {
+                string fileName;
+
+                cout << "Bonjour" << endl;
+                cout << "Entrer un nom de fichier avec son extension txt (ex: monTexte.txt)"<< endl;
+                cin >> fileName;
+
+                cout<<endl;
+
+                Graphe graphe(fileName, 3);
+                graphe.niveau4();
 
             }
             break;

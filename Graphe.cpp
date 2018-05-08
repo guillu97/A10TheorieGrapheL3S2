@@ -1598,5 +1598,129 @@ void Graphe::niveau3(){
 
 }
 
+void Graphe::niveau4(){
+
+    if(this->importe){
+
+         cout<< "Apres import"<<endl;
+
+        displayGraphe();
+
+
+
+        cout<<endl;
+        cout<<endl;
+        this->displayEtatToMatriceAdjIncid();
+        cout<<endl;
+        cout<<endl;
+        this->affichageGraphe();
+
+
+        // verification un seul point d'entree
+        recherchePointsEntrees();
+        displayPointEntrees();
+        if(tabPointEntrees.size() > 1){
+            char choix = 'c';
+            do{
+                cout<<"Il y a plusieurs tache initiale, entrez \"y\" pour creer une tache initiale alpha, \"n\" sinon : "<<endl;
+                cin >> choix;
+            }while(choix != 'y' && choix != 'Y' && choix != 'n' && choix != 'N');
+
+            if(choix == 'y' || choix == 'Y'){
+                cout<<"Creation d'un point d'entree alpha (nom: 0)"<<endl;
+                this->creerPointEntree();
+                displayEtatToMatriceAdjIncid();
+                displayPointEntrees();
+            }
+        }
+
+        if(tabPointEntrees.size() == 1){
+                // verification un seul point de sortie
+            recherchePointsSorties();
+            displayPointSorties();
+
+
+
+            if(tabPointSorties.size() > 1){
+                char choix = 'c';
+                do{
+                    cout<<"Il y a plusieurs tache finale, entrez \"y\" pour creer une tache finale omega, \"n\" sinon : "<<endl;
+                    cin >> choix;
+                }while(choix != 'y' && choix != 'Y' && choix != 'n' && choix != 'N');
+
+                if(choix == 'y' || choix == 'Y'){
+                    cout<<"Creation d'un point de sortie omega (nom:" << this->nbSommet<<")"<<endl;
+                    this->creerPointSortie();
+                    displayEtatToMatriceAdjIncid();
+                    displayPointSorties();
+                    cout<<endl;
+                    cout<<endl;
+                }
+            }
+
+            if(tabPointSorties.size() == 1){
+                if(!this->detectionCircuit()){
+                    if(verificationPointEntree()){
+                        if(verificationPointSortie()){
+                            if(verificationValeurArcNonNulle()){
+                                if(verificationValeurArc()){
+                                    cout<<endl;
+                                    cout<<endl;
+                                    cout << "Toutes les proprietes sonts Vraies !";
+                                    cout<<endl;
+                                    cout<<endl;
+                                    this->affichageGraphe();
+                                    this->calcRang();
+                                    this->affichageRang();
+                                    this->affichageRangTab();
+                                    this->calcDatePlusTot();
+                                    this->displayDatePlusTot();
+
+                                    // 1 signifie 100 pourcents
+                                    this->calcDatePlusTard(1);
+                                    this->displayDatePlusTard();
+
+                                    this->calcMarges();
+                                    this->affichageMarge();
+
+                                    cout<<endl;
+                                    cout<<endl;
+                                    cout<< "Calcul des dates avec la date au plus tard de fin de projet a 110 pourcents de sa date au plus tot " <<endl;
+
+                                    // 1,10 signifie 110 pourcents
+                                    this->calcDatePlusTard(1.10);
+                                    this->displayDatePlusTard();
+                                    this->calcMarges();
+                                    this->affichageMarge();
+
+
+                                }else{
+                                    cout<<" verificationValeurArc faux!"<<endl;
+                                }
+                            }else{
+                                cout<<"Le graphe contient au moins un arc dont la valeur est negative"<<endl;
+                            }
+                        }else{
+                            cout<< "Le graphe n'a pas de point de sortie accessible par tous les sommets"<<endl;
+                        }
+                    }else{
+                        cout<< "Le graphe n'a pas de point d'entree ayant acces a tous les sommets"<<endl;
+                    }
+                }else{
+                    cout<< "Il y a un circuit dans le graphe"<<endl;
+                }
+            }else{
+                cout<<"Il y a plusieurs points de sortie dans le graphe"<<endl;
+            }
+        }else{
+            cout<<"Il y a plusieurs points d'entree dans le graphe"<<endl;
+
+        }
+
+    }
+
+
+}
+
 
 

@@ -109,6 +109,7 @@ public:
     void niveau1();
     void niveau2();
     void niveau3();
+    void niveau4();
 
 };
 

@@ -35,6 +35,7 @@ private:
     std::vector <Etat*> tabPointEntrees;
     std::vector<Etat*>  tabPointSorties;
 
+
     bool importe;
 
 
@@ -53,6 +54,9 @@ public:
     bool importGraphe(std::string fileName);
     bool importContrainte(std::string fileName);
     void remplirGraphe();
+
+
+
     void displayGraphe();
     void affichageGraphe();
     void displayEtatToMatriceAdjIncid();
@@ -84,7 +88,15 @@ public:
     bool verificationPointSortie();
 
     bool verificationValeurArc();
-    bool verificationValeurArcNonNulle();
+    bool verificationValeurArcInteract();
+
+    bool verificationValeurArcNonNeg();
+    bool verificationValeurArcNonNegInteract();
+
+
+    bool remplirGrapheInteract();
+
+    std::vector<Etat*> detectionCircuitInteract();
 
 
     void calcDatePlusTot();

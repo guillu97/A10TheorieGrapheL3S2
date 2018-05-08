@@ -223,10 +223,15 @@ bool Graphe::importContrainte(string fileName){
 
     }
 
-    this->remplirGraphe();
-    this->displayGraphe();
-    this->displayEtatToMatriceAdjIncid();
-    return true;
+    if(this->remplirGrapheInteract()){
+        this->displayGraphe();
+        this->displayEtatToMatriceAdjIncid();
+        return true;
+    }
+    else
+        return false;
+
+
 }
 /**
 *   fonction qui remplit le graphe (tabEtat) à partir de la matrice d'adjacence et de la matrice d'incicdence
@@ -258,9 +263,104 @@ void Graphe::remplirGraphe(){
             if(matAdj[etatDebut][etatFin]){
                 tabEtats[etatDebut]->ajoutSuccesseur(tabEtats[etatFin], this->matInc[etatDebut][etatFin]);
                 tabEtats[etatFin]->ajoutPredecesseur(tabEtats[etatDebut], this->matInc[etatDebut][etatFin]);
+
             }
         }
     }
+
+
+
+    #if DEBUG == 1
+
+            cout << endl;
+            cout << endl;
+            cout << "DEBUG : " <<endl;
+
+            cout << "Tous les etats et leurs successeurs : "<<endl;
+            for(unsigned int i = 0; i<this->tabEtats.size(); i++){
+                //vector <Etat*> tempTabSuccesseurs = tabEtats[i]->getSuccesseurs();
+                cout << "Etat " << tabEtats[i]->getNom() << " :"<<endl;
+                cout<< "successeurs: [ ";
+                for(unsigned int j = 0; j<tabEtats[i]->successeurs.size(); j++){
+                    cout << tabEtats[i]->successeurs[j]->getNom() << " ";
+                }
+                cout <<"]"<<endl;
+            }
+
+            cout << "Tous les etats et leurs predecesseurs : "<<endl;
+            for(unsigned int i = 0; i<this->tabEtats.size(); i++){
+                //vector <Etat*> tempTabSuccesseurs = tabEtats[i]->getSuccesseurs();
+                cout << "Etat " << tabEtats[i]->getNom() << " :"<<endl;
+                cout<< "predecesseurs: [ ";
+                for(unsigned int j = 0; j<tabEtats[i]->predecesseurs.size(); j++){
+                    cout << tabEtats[i]->predecesseurs[j]->getNom() << " ";;
+                }
+                cout <<"]"<<endl;
+            }
+
+            cout<<": DEBUG"<<endl;
+            cout << endl;
+            cout << endl;
+
+        #endif // DEBUG
+
+
+}
+
+bool Graphe::remplirGrapheInteract(){
+
+
+    // create a tabEtat with all the states, then we will add the successors
+    for(int i = 1; i<=this->nbSommet; i++){
+        tabEtats.push_back(new Etat(i));
+    }
+
+    #if DEBUG == 1
+        cout << endl;
+        cout<< "DEBUG : " <<endl;
+        cout << "Les etats presents: " <<endl;
+        for(int i = 0; i<this->nbSommet; i++ ){
+            cout << tabEtats[i]->getNom() << " ";
+        }
+        cout<<endl;
+        cout<< ": DEBUG" <<endl;
+        cout <<endl;
+    #endif // DEBUG
+
+    bool pasDeCircuit = true;
+
+    for(int etatDebut = 0; etatDebut<this->nbSommet; etatDebut++){
+        for(int etatFin = 0; etatFin<this->nbSommet; etatFin++){
+                        //we add the successor to the tabEtats
+            if(matAdj[etatDebut][etatFin]){
+                tabEtats[etatDebut]->ajoutSuccesseur(tabEtats[etatFin], this->matInc[etatDebut][etatFin]);
+                tabEtats[etatFin]->ajoutPredecesseur(tabEtats[etatDebut], this->matInc[etatDebut][etatFin]);
+
+                vector <Etat*> circuit = this->detectionCircuitInteract();
+                if(!circuit.empty()){
+                    pasDeCircuit = false;
+
+
+                    // il y a un problème lors de la prise en  compte de la contrainte ‘A a besoin de C’
+                    // avec les contraintes déjà intégrées ‘B a besoin de A’ et ‘C a besoin de B’
+                    cout<<"Il y a un probleme lors de la prise en  compte de la contrainte \'"
+                    << etatDebut + 1 <<" a besoin de "<<  etatFin + 1<<"\' "
+                    <<"avec les contraintes deja integrees: "<<endl;
+                    for(unsigned int i=0; i<circuit.size(); i++){
+                        if(circuit[i]->getNom() != etatDebut + 1){
+                            for(unsigned int j=0; j<circuit[i]->successeurs.size(); j++)
+                                cout<<"\'"<<circuit[i]->getNom()<< " a besoin de "<< circuit[i]->successeurs[j]->getNom()
+                                <<"\'"<<endl;
+                        }
+                    }
+                    cout<<endl;
+                }
+            }
+        }
+    }
+
+    return pasDeCircuit;
+
 
 
     #if DEBUG == 1
@@ -782,6 +882,38 @@ bool Graphe::detectionCircuit(){
 
 }
 
+vector<Etat*> Graphe::detectionCircuitInteract(){
+    Graphe copieGraphe = *this;
+
+
+    // on ajoute  + 1 pour le nom
+    for(unsigned int i = 0; i<copieGraphe.tabEtats.size(); i++)
+        copieGraphe.tabEtats[i]->setNom(copieGraphe.tabEtats[i]->getNom() + 1);
+
+
+    vector<Etat*> circuit;
+
+    copieGraphe.recherchePointsEntrees();
+    while(copieGraphe.tabPointEntrees.size() != 0 && copieGraphe.tabEtats.size() != 0){
+        for(unsigned int i = 0; i<copieGraphe.tabPointEntrees.size(); i++){
+            // on supprime le point d'entree du graphe copié
+            copieGraphe.supprEtat(copieGraphe.tabPointEntrees[i]);
+
+            // on supprime l'etat du tableau des points d'entrees car on vient de le traité
+            copieGraphe.tabPointEntrees.erase(copieGraphe.tabPointEntrees.begin() + i);
+        }
+        copieGraphe.recherchePointsEntrees();
+    }
+
+    // s'il y a un circuit
+    // on retourne ce circuit
+    // s'il n'y a pas de circuit cela retourne un vecteur vide ( à verifier : if(detectionCircuitInteract().empty()) )
+    circuit = copieGraphe.tabEtats;
+    return circuit;
+
+}
+
+
 void Graphe::calcRang(){
 
     Graphe copieGraphe = *this;
@@ -969,16 +1101,59 @@ bool Graphe::verificationPointSortie(){
         return false;
 }
 
-bool Graphe::verificationValeurArcNonNulle(){
+bool Graphe::verificationValeurArcNonNeg(){
 
     // on parcourt tous les tableaux de poids, et on vérifie que chaque poids est > 0, s'il ne l'est pas on return false
 
     for(unsigned int i=0; i<this->tabEtats.size(); i++){
         for(unsigned int j = 0; j<this->tabEtats[i]->poidsSuccesseur.size(); j++){
-            if(this->tabEtats[i]->poidsSuccesseur[j] < 0)
+            if(this->tabEtats[i]->poidsSuccesseur[j] < 0){
                 return false;
+            }
         }
     }
+    // on a parcourut tous les poids, ils sont tous >= 0
+    return true;
+
+}
+
+
+
+bool Graphe::verificationValeurArcNonNegInteract(){
+
+    // on parcourt tous les tableaux de poids, et on vérifie que chaque poids est > 0, s'il ne l'est pas on return false
+
+    for(unsigned int i=0; i<this->tabEtats.size(); i++){
+        for(unsigned int j = 0; j<this->tabEtats[i]->poidsSuccesseur.size(); j++){
+            if(this->tabEtats[i]->poidsSuccesseur[j] < 0){
+                    cout<<"Tache de duree negative:"<<endl;
+                    cout<<"Tache: " << tabEtats[i]->getNom()<<endl;
+                    cout<<"Duree: " << tabEtats[i]->poidsSuccesseur[j] <<endl;
+                    char choix = 'c';
+                    do{
+                        cout<<"Voulez-vous changer la duree de cette tache? (y/n)"<<endl;
+                        cin >> choix;
+                    }while(choix != 'y' && choix != 'Y' && choix != 'n' && choix != 'N');
+
+                    if(choix == 'y' || choix == 'Y'){
+                        int newVal = -1;
+                        do{
+                            cout<<"Entrez une nouvelle duree superieure ou egale a 0:"<<endl;
+                            cin >> newVal;
+                        }while(newVal < 0);
+
+                        // on change tous les poids des arcs de l'etat vers ses successeurs
+                        for(unsigned int k = 0; k<this->tabEtats[i]->poidsSuccesseur.size(); k++)
+                            tabEtats[i]->poidsSuccesseur[k] = newVal;
+                        // on passe directement à l'etat suivant
+                        j = this->tabEtats[i]->poidsSuccesseur.size();
+                    }
+                    else
+                        return false;
+            }
+        }
+    }
+
     // on a parcourut tous les poids, ils sont tous >= 0
     return true;
 
@@ -998,6 +1173,49 @@ bool Graphe::verificationValeurArc(){
         for(unsigned int j = 0; j<this->tabEtats[i]->poidsSuccesseur.size(); j++){
             if(this->tabEtats[i]->poidsSuccesseur[j] != valeurRef)
                 return false;
+        }
+    }
+    return true;
+}
+
+bool Graphe::verificationValeurArcInteract(){
+
+    for(unsigned int i=0; i<this->tabEtats.size(); i++){
+
+        int valeurRef = -1;
+        if(this->tabEtats[i]->poidsSuccesseur.size() != 0)
+            valeurRef = this->tabEtats[i]->poidsSuccesseur[0];
+
+        for(unsigned int j = 0; j<this->tabEtats[i]->poidsSuccesseur.size(); j++){
+            if(this->tabEtats[i]->poidsSuccesseur[j] != valeurRef){
+                    cout<<"Probleme de duree de tache, plusieurs durees on ete trouvee pour une seule tache:"<<endl;
+                    cout<<"Tache: " << tabEtats[i]->getNom()<<endl;
+                    cout<<"Duree: " << tabEtats[i]->poidsSuccesseur[j] <<endl;
+                    cout<<"Or la duree de reference pour cette tache etait: " <<valeurRef<<endl;
+                    char choix = 'c';
+                    do{
+                        cout<<"Voulez-vous changer la duree de cette tache? (y/n)"<<endl;
+                        cin >> choix;
+                    }while(choix != 'y' && choix != 'Y' && choix != 'n' && choix != 'N');
+
+                    if(choix == 'y' || choix == 'Y'){
+                        int newVal = -1;
+                        do{
+                            cout<<"Entrez une nouvelle duree superieure ou egale a 0:"<<endl;
+                            cin >> newVal;
+                        }while(newVal < 0);
+
+                        // on change tous les poids des arcs de l'etat vers ses successeurs
+                        for(unsigned int k = 0; k<this->tabEtats[i]->poidsSuccesseur.size(); k++)
+                            tabEtats[i]->poidsSuccesseur[k] = newVal;
+                        // on passe directement à l'etat suivant
+                        j = this->tabEtats[i]->poidsSuccesseur.size();
+                    }
+                    else
+                        return false;
+
+
+            }
         }
     }
     return true;
@@ -1297,7 +1515,7 @@ void Graphe::niveau2(){
                 if(!this->detectionCircuit()){
                     if(verificationPointEntree()){
                         if(verificationPointSortie()){
-                            if(verificationValeurArcNonNulle()){
+                            if(verificationValeurArcNonNeg()){
                                 if(verificationValeurArc()){
                                     cout<<endl;
                                     cout<<endl;
@@ -1362,11 +1580,14 @@ void Graphe::creerPointEntree(){
 
 
 
+/*
 
     // le nom des etats commence à 0, or 0 c'est alpha, donc on ajoute +1 à chaque nom
+
     for(unsigned int i=0; i<tabEtats.size(); i++){
         tabEtats[i]->setNom(tabEtats[i]->getNom() + 1);
     }
+    */
 
     Etat* alpha = new Etat(0);
 
@@ -1409,7 +1630,7 @@ void Graphe::creerPointEntree(){
         cout<< "DEBUG:"<<endl;
         cout<<"Nouveau graphe avec le point d'entree alpha ajoute (nom: 0): "<<endl;
         displayEtatToMatriceAdjIncid();
-        cout<<"Créer point d'entree, creation des matrices a partir du nouveau graphe"<<endl;
+        cout<<"Fonction Creer point d'entree, test de creation des matrices a partir du nouveau graphe"<<endl;
         displayGraphe();
         cout<< ":DEBUG"<<endl;
     #endif // DEBUG
@@ -1480,9 +1701,10 @@ void Graphe::creerPointSortie(){
 
     #if DEBUG == 1
         cout<< "DEBUG:"<<endl;
-        cout<<"Nouveau graphe avec le point de sortie omega ajoute (nom:" << this->nbSommet - 2<< "): "<<endl;
+        // nbSomment - 1 car on vient de l'incrementer
+        cout<<"Nouveau graphe avec le point de sortie omega ajoute (nom:" << this->nbSommet - 1<< "): "<<endl;
         displayEtatToMatriceAdjIncid();
-        cout<<"Créer point de sortie, creation des matrices a partir du nouveau graphe"<<endl;
+        cout<<"Fonction Creer point de sortie, test de creation des matrices a partir du nouveau graphe"<<endl;
         displayGraphe();
         cout<< ":DEBUG"<<endl;
     #endif // DEBUG
@@ -1538,7 +1760,7 @@ void Graphe::niveau3(){
                 if(!this->detectionCircuit()){
                     if(verificationPointEntree()){
                         if(verificationPointSortie()){
-                            if(verificationValeurArcNonNulle()){
+                            if(verificationValeurArcNonNeg()){
                                 if(verificationValeurArc()){
                                     cout<<endl;
                                     cout<<endl;
@@ -1622,7 +1844,7 @@ void Graphe::niveau4(){
         if(tabPointEntrees.size() > 1){
             char choix = 'c';
             do{
-                cout<<"Il y a plusieurs tache initiale, entrez \"y\" pour creer une tache initiale alpha, \"n\" sinon : "<<endl;
+                cout<<"Il y a plusieurs taches initiales, entrez \"y\" pour creer une tache initiale alpha, \"n\" sinon : "<<endl;
                 cin >> choix;
             }while(choix != 'y' && choix != 'Y' && choix != 'n' && choix != 'N');
 
@@ -1644,12 +1866,12 @@ void Graphe::niveau4(){
             if(tabPointSorties.size() > 1){
                 char choix = 'c';
                 do{
-                    cout<<"Il y a plusieurs tache finale, entrez \"y\" pour creer une tache finale omega, \"n\" sinon : "<<endl;
+                    cout<<"Il y a plusieurs taches finales, entrez \"y\" pour creer une tache finale omega, \"n\" sinon : "<<endl;
                     cin >> choix;
                 }while(choix != 'y' && choix != 'Y' && choix != 'n' && choix != 'N');
 
                 if(choix == 'y' || choix == 'Y'){
-                    cout<<"Creation d'un point de sortie omega (nom:" << this->nbSommet<<")"<<endl;
+                    cout<<"Creation d'un point de sortie omega (nom:" << this->nbSommet <<")"<<endl;
                     this->creerPointSortie();
                     displayEtatToMatriceAdjIncid();
                     displayPointSorties();
@@ -1662,14 +1884,16 @@ void Graphe::niveau4(){
                 if(!this->detectionCircuit()){
                     if(verificationPointEntree()){
                         if(verificationPointSortie()){
-                            if(verificationValeurArcNonNulle()){
-                                if(verificationValeurArc()){
+                            if(verificationValeurArcNonNegInteract()){
+                                    // normalement, impossible que ce soit faux, à cause de l'importation
+                                if(verificationValeurArcInteract()){
                                     cout<<endl;
                                     cout<<endl;
                                     cout << "Toutes les proprietes sonts Vraies !";
                                     cout<<endl;
                                     cout<<endl;
                                     this->affichageGraphe();
+                                    this->displayEtatToMatriceAdjIncid();
                                     this->calcRang();
                                     this->affichageRang();
                                     this->affichageRangTab();

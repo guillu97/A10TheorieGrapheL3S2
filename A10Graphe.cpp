@@ -109,8 +109,8 @@ bool Graphe::importGraphe(string fileName) {
         int etatDebut, etatFin, poids;
 
         #if DEBUG == 1
-                //Log::write_to_log("DEBUG : lecture du fichier txt ");
-                cout <<"DEBUG : lecture du fichier txt "<<endl;
+                Log::write_to_log("DEBUG : lecture du fichier txt ");
+                //cout <<"DEBUG : lecture du fichier txt "<<endl;
         #endif // DEBUG
 
         for(int i = 0; i < this->nbArc; i++){
@@ -123,6 +123,7 @@ bool Graphe::importGraphe(string fileName) {
 
 
             #if DEBUG == 1
+                Log::write_to_log("DEBUG : lecture du fichier txt ");
                 cout << "etatDebut: " << etatDebut << " ";
 
                 cout << "etatFin: " << etatFin<< " ";
@@ -204,6 +205,9 @@ bool Graphe::importContrainte(string fileName){
         file >> lePoid;
         tableauPoid[lEtat-1] = lePoid;
     }
+
+    //  sauvegarde de ce tableau, car on en a besoin pour la creation des points de sorties
+    tabPoidsEtat = tableauPoid;
 
     cout << "Contrainte" << endl;
     for(int i = 0; i < this->nbSommet; i++){
@@ -1654,13 +1658,16 @@ void Graphe::creerPointSortie(){
 
 
 
+
     for(unsigned int i=0; i<tabPointSorties.size(); i++){
 
+
+
         // ajout des predecesseurs d'omega
-        omega->ajoutPredecesseur(tabPointSorties[i], 0);
+        omega->ajoutPredecesseur(tabPointSorties[i], tabPoidsEtat[tabPointSorties[i]->getNom() - 1]);
 
         // ajout des predecesseurs vers omega
-        tabPointSorties[i]->ajoutSuccesseur(omega,0);
+        tabPointSorties[i]->ajoutSuccesseur(omega,tabPoidsEtat[tabPointSorties[i]->getNom() - 1]);
     }
 
 

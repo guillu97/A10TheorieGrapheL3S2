@@ -30,6 +30,9 @@ private:
     bool** matAdj = NULL;
     int** matInc = NULL;
 
+    // utilisé pour les contraintes
+    int* tabPoidsEtat = NULL;
+
 
     // En UTILISANT matAdj
     //std::vector <int> tabPointEntrees;
@@ -46,6 +49,7 @@ private:
 
 
 public:
+
 
     std::vector<Etat*> tabEtats;
 

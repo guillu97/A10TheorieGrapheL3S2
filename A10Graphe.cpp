@@ -7,7 +7,8 @@
 #define SPACE 3
 
 
-
+std::ofstream log_file(
+        "A10log_file.txt", std::ios_base::out | std::ios_base::app );
 
 
 using namespace std;
@@ -174,12 +175,10 @@ bool Graphe::importGraphe(string fileName) {
         // remplir matAdj, matInc, tabEtats et tabArc
         int etatDebut, etatFin, poids;
 
-        #if LOG == 1
-            //Log::log_file <<"LOG : lecture du fichier txt ";
-        #endif // DEBUG
+
 
         #if DEBUG == 1
-                cout <<"DEBUG : lecture du fichier txt "<<endl;
+                log_file <<"DEBUG : lecture du fichier txt "<<endl;
         #endif // DEBUG
 
         for(int i = 0; i < this->nbArc; i++){
@@ -193,11 +192,11 @@ bool Graphe::importGraphe(string fileName) {
 
             #if DEBUG == 1
                 //Log::write_to_log("DEBUG : lecture du fichier txt ");
-                cout << "etatDebut: " << etatDebut << " ";
+                log_file << "etatDebut: " << etatDebut << " ";
 
-                cout << "etatFin: " << etatFin<< " ";
+                log_file<< "etatFin: " << etatFin<< " ";
 
-                cout<< "poids: " << poids << endl;
+                log_file<< "poids: " << poids << endl;
             #endif // DEBUG
 
             // remplir une case matAdj avec true
@@ -209,7 +208,7 @@ bool Graphe::importGraphe(string fileName) {
         }
 
         #if DEBUG == 1
-                cout <<": DEBUG "<<endl;
+                log_file <<": DEBUG "<<endl;
         #endif // DEBUG
 
 
@@ -356,15 +355,15 @@ void Graphe::remplirGraphe(){
     }
 
     #if DEBUG == 1
-        cout << endl;
-        cout<< "DEBUG : " <<endl;
-        cout << "Les etats presents: " <<endl;
+        log_file << endl;
+        log_file<< "DEBUG : " <<endl;
+        log_file<< "Les etats presents: " <<endl;
         for(int i = 0; i<this->nbSommet; i++ ){
-            cout << tabEtats[i]->getNom() << " ";
+            log_file << tabEtats[i]->getNom() << " ";
         }
-        cout<<endl;
-        cout<< ": DEBUG" <<endl;
-        cout <<endl;
+        log_file<<endl;
+        log_file<< ": DEBUG" <<endl;
+        log_file<<endl;
     #endif // DEBUG
 
 
@@ -383,35 +382,35 @@ void Graphe::remplirGraphe(){
 
     #if DEBUG == 1
 
-            cout << endl;
-            cout << endl;
-            cout << "DEBUG : " <<endl;
+            log_file << endl;
+            log_file << endl;
+            log_file << "DEBUG : " <<endl;
 
-            cout << "Tous les etats et leurs successeurs : "<<endl;
+            log_file<< "Tous les etats et leurs successeurs : "<<endl;
             for(unsigned int i = 0; i<this->tabEtats.size(); i++){
                 //vector <Etat*> tempTabSuccesseurs = tabEtats[i]->getSuccesseurs();
-                cout << "Etat " << tabEtats[i]->getNom() << " :"<<endl;
-                cout<< "successeurs: [ ";
+                log_file<< "Etat " << tabEtats[i]->getNom() << " :"<<endl;
+                log_file<< "successeurs: [ ";
                 for(unsigned int j = 0; j<tabEtats[i]->successeurs.size(); j++){
-                    cout << tabEtats[i]->successeurs[j]->getNom() << " ";
+                    log_file << tabEtats[i]->successeurs[j]->getNom() << " ";
                 }
-                cout <<"]"<<endl;
+                log_file<<"]"<<endl;
             }
 
-            cout << "Tous les etats et leurs predecesseurs : "<<endl;
+            log_file<< "Tous les etats et leurs predecesseurs : "<<endl;
             for(unsigned int i = 0; i<this->tabEtats.size(); i++){
                 //vector <Etat*> tempTabSuccesseurs = tabEtats[i]->getSuccesseurs();
-                cout << "Etat " << tabEtats[i]->getNom() << " :"<<endl;
-                cout<< "predecesseurs: [ ";
+                log_file<< "Etat " << tabEtats[i]->getNom() << " :"<<endl;
+                log_file<< "predecesseurs: [ ";
                 for(unsigned int j = 0; j<tabEtats[i]->predecesseurs.size(); j++){
-                    cout << tabEtats[i]->predecesseurs[j]->getNom() << " ";;
+                    log_file << tabEtats[i]->predecesseurs[j]->getNom() << " ";;
                 }
-                cout <<"]"<<endl;
+                log_file <<"]"<<endl;
             }
 
-            cout<<": DEBUG"<<endl;
-            cout << endl;
-            cout << endl;
+            log_file<<": DEBUG"<<endl;
+            log_file<< endl;
+            log_file<< endl;
 
         #endif // DEBUG
 
@@ -427,15 +426,15 @@ bool Graphe::remplirGrapheInteract(){
     }
 
     #if DEBUG == 1
-        cout << endl;
-        cout<< "DEBUG : " <<endl;
-        cout << "Les etats presents: " <<endl;
+        log_file<< endl;
+        log_file<< "DEBUG : " <<endl;
+        log_file<< "Les etats presents: " <<endl;
         for(int i = 0; i<this->nbSommet; i++ ){
-            cout << tabEtats[i]->getNom() << " ";
+            log_file << tabEtats[i]->getNom() << " ";
         }
-        cout<<endl;
-        cout<< ": DEBUG" <<endl;
-        cout <<endl;
+        log_file<<endl;
+        log_file<< ": DEBUG" <<endl;
+        log_file <<endl;
     #endif // DEBUG
 
     bool pasDeCircuit = true;
@@ -495,35 +494,35 @@ bool Graphe::remplirGrapheInteract(){
 
     #if DEBUG == 1
 
-            cout << endl;
-            cout << endl;
-            cout << "DEBUG : " <<endl;
+            log_file << endl;
+            log_file << endl;
+            log_file << "DEBUG : " <<endl;
 
-            cout << "Tous les etats et leurs successeurs : "<<endl;
+            log_file << "Tous les etats et leurs successeurs : "<<endl;
             for(unsigned int i = 0; i<this->tabEtats.size(); i++){
                 //vector <Etat*> tempTabSuccesseurs = tabEtats[i]->getSuccesseurs();
-                cout << "Etat " << tabEtats[i]->getNom() << " :"<<endl;
-                cout<< "successeurs: [ ";
+                log_file << "Etat " << tabEtats[i]->getNom() << " :"<<endl;
+                log_file<< "successeurs: [ ";
                 for(unsigned int j = 0; j<tabEtats[i]->successeurs.size(); j++){
-                    cout << tabEtats[i]->successeurs[j]->getNom() << " ";
+                    log_file << tabEtats[i]->successeurs[j]->getNom() << " ";
                 }
-                cout <<"]"<<endl;
+                log_file <<"]"<<endl;
             }
 
-            cout << "Tous les etats et leurs predecesseurs : "<<endl;
+            log_file << "Tous les etats et leurs predecesseurs : "<<endl;
             for(unsigned int i = 0; i<this->tabEtats.size(); i++){
                 //vector <Etat*> tempTabSuccesseurs = tabEtats[i]->getSuccesseurs();
-                cout << "Etat " << tabEtats[i]->getNom() << " :"<<endl;
-                cout<< "predecesseurs: [ ";
+                log_file << "Etat " << tabEtats[i]->getNom() << " :"<<endl;
+                log_file<< "predecesseurs: [ ";
                 for(unsigned int j = 0; j<tabEtats[i]->predecesseurs.size(); j++){
-                    cout << tabEtats[i]->predecesseurs[j]->getNom() << " ";;
+                    log_file << tabEtats[i]->predecesseurs[j]->getNom() << " ";;
                 }
-                cout <<"]"<<endl;
+                log_file <<"]"<<endl;
             }
 
-            cout<<": DEBUG"<<endl;
-            cout << endl;
-            cout << endl;
+            log_file<<": DEBUG"<<endl;
+            log_file << endl;
+            log_file << endl;
 
         #endif // DEBUG
 
@@ -531,6 +530,7 @@ bool Graphe::remplirGrapheInteract(){
 }
 
 void Graphe::displayGraphe() {
+
 
     cout << endl;
     cout << "nb sommet: ";
@@ -556,7 +556,7 @@ void Graphe::displayGraphe() {
 
     cout << endl;
 
-    cout << "MatInc: " << endl;
+    cout << "MatVal: " << endl;
     if(matInc != NULL){
         // display matInc
         for(int i = 0; i<this->nbSommet; i++){
@@ -578,58 +578,89 @@ void Graphe::displayGraphe() {
 void Graphe::displayEtatToMatriceAdjIncid(){
 
     cout << "****MATRICE D'ADJACENCE****" << endl << endl;
+    log_file << "****MATRICE D'ADJACENCE****" << endl << endl;
     cout << setw(SPACE) << left<< "//" << "| ";
-    for(unsigned int j = 0; j < tabEtats.size(); j++)
+    log_file << setw(SPACE) << left<< "//" << "| ";
+    for(unsigned int j = 0; j < tabEtats.size(); j++){
         cout << setw(SPACE) << left << tabEtats[j]->getNom();
+        log_file << setw(SPACE) << left << tabEtats[j]->getNom();
+    }
     cout << endl;
-    for(unsigned int j = 0; j < tabEtats.size(); j++)
+    log_file << endl;
+    for(unsigned int j = 0; j < tabEtats.size(); j++){
         cout << "-------";
+        log_file << "-------";
+    }
     cout << endl;
+    log_file << endl;
     for(unsigned int i = 0; i < this->tabEtats.size(); i++){
         vector <Etat*> tabSuccesseursSuccesseurs = tabEtats[i]->successeurs;
         unsigned int k = 0;
 
         cout << setw(SPACE) << left << tabEtats[i]->getNom() << "| ";
+        log_file << setw(SPACE) << left << tabEtats[i]->getNom() << "| ";
         for(unsigned int j = 0; j < tabEtats.size(); j++){
 
-            if ( k >= tabSuccesseursSuccesseurs.size())
+            if ( k >= tabSuccesseursSuccesseurs.size()){
                 cout << setw(SPACE) << left << 0;
+                log_file << setw(SPACE) << left << 0;
+            }
             else if(tabSuccesseursSuccesseurs[k]->getNom() == tabEtats[j]->getNom()){
                 cout << setw(SPACE) << left << 1;
+                log_file << setw(SPACE) << left << 1;
                 k++;
             }
-            else
+            else{
                 cout << setw(SPACE) << left << 0;
+                log_file << setw(SPACE) << left << 0;
+            }
         }
         cout << endl;
+        log_file << endl;
     }
     cout<<endl;
-    cout << "****MATRICE D'INCIDENCE****" << endl << endl;
+    log_file<<endl;
+    cout << "****MATRICE DE VALEUR****" << endl << endl;
+    log_file << "****MATRICE DE VALEUR****" << endl << endl;
     cout << setw(SPACE) << left<< "//" << "| ";
-    for(unsigned int j = 0; j < tabEtats.size(); j++)
+    log_file << setw(SPACE) << left<< "//" << "| ";
+    for(unsigned int j = 0; j < tabEtats.size(); j++){
         cout << setw(SPACE) << left << tabEtats[j]->getNom();
+        log_file << setw(SPACE) << left << tabEtats[j]->getNom();
+    }
     cout << endl;
-    for(unsigned int j = 0; j < tabEtats.size(); j++)
+    log_file << endl;
+    for(unsigned int j = 0; j < tabEtats.size(); j++){
         cout << "-------";
+        log_file << "-------";
+    }
     cout << endl;
+    log_file << endl;
     for(unsigned int i = 0; i < this->tabEtats.size(); i++){
         vector <Etat*> tabSuccesseursSuccesseurs = tabEtats[i]->successeurs;
         vector<int>tabPoidsSuccesseurs = tabEtats[i]->poidsSuccesseur;
         unsigned int k = 0;
 
         cout << setw(SPACE) << left << tabEtats[i]->getNom() << "| ";
+        log_file << setw(SPACE) << left << tabEtats[i]->getNom() << "| ";
         for(unsigned int j = 0; j < tabEtats.size(); j++){
 
-            if ( k >= tabSuccesseursSuccesseurs.size())
+            if ( k >= tabSuccesseursSuccesseurs.size()){
                 cout << setw(SPACE) << left << "/";
+                log_file << setw(SPACE) << left << "/";
+            }
             else if(tabSuccesseursSuccesseurs[k]->getNom() == tabEtats[j]->getNom()){
                 cout << setw(SPACE) << left << tabPoidsSuccesseurs[k];
+                log_file << setw(SPACE) << left << tabPoidsSuccesseurs[k];
                 k++;
             }
-            else
+            else{
                 cout << setw(SPACE) << left << "/";
+                log_file << setw(SPACE) << left << "/";
+            }
         }
         cout << endl;
+        log_file << endl;
     }
 
 }
@@ -881,9 +912,9 @@ void Graphe::recherchePointsEntrees(){
     }
 */
     #if DEBUG == 1
-        cout<< "DEBUG:"<<endl;
+        log_file<< "DEBUG:"<<endl;
         displayPointEntrees();
-        cout<< ":DEBUG"<<endl;
+        log_file<< ":DEBUG"<<endl;
 
 
     #endif // DEBUG
@@ -895,13 +926,21 @@ void Graphe::displayPointEntrees(){
     cout<<endl;
     cout<<endl;
 
-    cout << "Points d'entrees"<<endl;
+    log_file<<endl;
+    log_file<<endl;
 
-    if(tabPointEntrees.size() == 0)
+    cout << "Points d'entrees"<<endl;
+    log_file<< "Points d'entrees"<<endl;
+
+    if(tabPointEntrees.size() == 0){
         cout<<"Il n y a pas de point d entree"<<endl;
+        log_file<<"Il n y a pas de point d entree"<<endl;
+    }
     else{
-          for(unsigned int i = 0; i<tabPointEntrees.size(); i++)
+          for(unsigned int i = 0; i<tabPointEntrees.size(); i++){
             cout<<"Etat "<< tabPointEntrees[i]->getNom() <<endl;
+            log_file<<"Etat "<< tabPointEntrees[i]->getNom() <<endl;
+          }
     }
 
     /*
@@ -915,6 +954,9 @@ void Graphe::displayPointEntrees(){
     */
     cout<<endl;
     cout<<endl;
+
+    log_file<<endl;
+    log_file<<endl;
 }
 
 void Graphe::recherchePointsSorties(){
@@ -952,9 +994,9 @@ void Graphe::recherchePointsSorties(){
     }
 
     #if DEBUG == 1
-        cout<< "DEBUG:"<<endl;
+        log_file<< "DEBUG:"<<endl;
         displayPointSorties();
-        cout<< ":DEBUG"<<endl;
+        log_file<< ":DEBUG"<<endl;
 
 
     #endif // DEBUG
@@ -962,16 +1004,25 @@ void Graphe::recherchePointsSorties(){
 }
 
 void Graphe::displayPointSorties(){
+
+    log_file<<endl;
+    log_file<<endl;
+
     cout<<endl;
     cout<<endl;
 
     cout << "Points de sorties"<<endl;
+    log_file << "Points de sorties"<<endl;
 
-    if(tabPointEntrees.size() == 0)
+    if(tabPointEntrees.size() == 0){
         cout<<"Il n y a pas de point de sortie"<<endl;
+        log_file<<"Il n y a pas de point de sortie"<<endl;
+    }
     else{
-          for(unsigned int i = 0; i<tabPointSorties.size(); i++)
+          for(unsigned int i = 0; i<tabPointSorties.size(); i++){
             cout<<"Etat "<< tabPointSorties[i]->getNom() <<endl;
+            log_file<<"Etat "<< tabPointSorties[i]->getNom() <<endl;
+          }
     }
 }
 
@@ -1228,9 +1279,9 @@ void Graphe::calcRang(){
     int k = 0;
 
     #if DEBUG == 1
-        cout<<endl;
-        cout<<"DEBUG:"<<endl;
-        cout<<"Calcul du rang"<<endl;
+        log_file<<endl;
+        log_file<<"DEBUG:"<<endl;
+        log_file<<"Calcul du rang"<<endl;
     #endif // DEBUG
 
     while(copieGraphe.tabEtats.size() != 0){
@@ -1238,7 +1289,7 @@ void Graphe::calcRang(){
         copieGraphe.recherchePointsEntrees();
 
         #if DEBUG == 1
-            cout<< "Rang k= " <<k;
+            log_file<< "Rang k= " <<k;
             copieGraphe.displayPointEntrees();
         #endif // DEBUG
 
@@ -1269,14 +1320,14 @@ void Graphe::calcRang(){
 
 
         #if DEBUG == 1
-            cout<< "Graphe apres suppression des points d entrees"<<endl;
+            log_file<< "Graphe apres suppression des points d entrees"<<endl;
             copieGraphe.displayEtatToMatriceAdjIncid();
         #endif // DEBUG
     }
 
     #if DEBUG == 1
-        cout<<":DEBUG"<<endl;
-        cout<<endl;
+        log_file<<":DEBUG"<<endl;
+        log_file<<endl;
     #endif // DEBUG
 
 }
@@ -1306,10 +1357,11 @@ void Graphe::affichageRangTab(){
 
 
 void Graphe::niveau1(){
-    #if LOG == 1
-    Log::write_to_log("Niveau1:\n\n");
-    #endif // LOG
 
+    log_file<<endl;
+    log_file<<"---------------------------------------------"<<endl;
+    log_file<<"Niveau 1 :"<<endl;
+    log_file<<endl;
     if(this->importe){
         displayGraphe();
         string a;
@@ -1363,10 +1415,11 @@ bool Graphe::verificationPointEntree(){
 
     }
     #if DEBUG == 1
-        cout<<"DEBUG: affichage des etats parcourus lors de la verification des points d'entree"<<endl;
-        for(unsigned int i = 0; i<tab.size(); i++)
-            cout<< "[" <<tab[i]->getNom()<<"]"<<endl;
-        cout<<":DEBUG"<<endl;
+        log_file<<"DEBUG: affichage des etats parcourus lors de la verification des points d'entree"<<endl;
+        for(unsigned int i = 0; i<tab.size(); i++){
+            log_file<< "[" <<tab[i]->getNom()<<"]"<<endl;
+        }
+        log_file<<":DEBUG"<<endl;
     #endif // DEBUG
 
     if((int)tab.size() == this->nbSommet)
@@ -1398,10 +1451,11 @@ bool Graphe::verificationPointSortie(){
 
     }
     #if DEBUG == 1
-        cout<<"DEBUG: affichage des etats parcourus lors de la verification"<<endl;
-        for(unsigned int i = 0; i<tab.size(); i++)
-            cout<< "[" <<tab[i]->getNom()<<"]"<<endl;
-        cout<<":DEBUG"<<endl;
+        log_file<<"DEBUG: affichage des etats parcourus lors de la verification"<<endl;
+        for(unsigned int i = 0; i<tab.size(); i++){
+            log_file<< "[" <<tab[i]->getNom()<<"]"<<endl;
+        }
+        log_file<<":DEBUG"<<endl;
     #endif // DEBUG
 
     if((int)tab.size() == this->nbSommet)
@@ -1539,26 +1593,27 @@ void Graphe::calcDatePlusTot(){
 
 
     #if DEBUG == 1
-        cout<<endl;
-        cout<<endl;
-        cout<<"DEBUG: calcul de la date au plus tot"<<endl;
+        log_file<<endl;
+        log_file<<endl;
+        log_file<<"DEBUG: calcul de la date au plus tot"<<endl;
         int iteration = 0;
     #endif // DEBUG
 
     while(!file.empty()){
 
         #if DEBUG == 1
-            cout<< "-----------------------"<<endl;
-            cout<<"Iteration : "<<iteration<<endl;
-            cout<<"La file avant iteration: "<<endl;
+            log_file<< "-----------------------"<<endl;
+            log_file<<"Iteration : "<<iteration<<endl;
+            log_file<<"La file avant iteration: "<<endl;
 
-            for(unsigned int i = 0; i<file.size(); i++)
-                cout<<file[i]<< " ";
-            cout<<endl;
+            for(unsigned int i = 0; i<file.size(); i++){
+                log_file<<file[i]<< " ";
+            }
+            log_file<<endl;
             iteration++;
 
 
-            cout<<endl;
+            log_file<<endl;
 
         #endif // DEBUG
 
@@ -1604,21 +1659,21 @@ void Graphe::calcDatePlusTot(){
         }
         file.erase(file.begin());
         #if DEBUG == 1
-            cout<<endl;
-            cout<<"La file apres iteration: "<<endl;
+            log_file<<endl;
+            log_file<<"La file apres iteration: "<<endl;
 
             for(unsigned int i = 0; i<file.size(); i++)
-                cout<<file[i]<< " ";
-            cout<<endl;
-            cout<<endl;
-            cout<<"apres iteration:";
+                log_file<<file[i]<< " ";
+            log_file<<endl;
+            log_file<<endl;
+            log_file<<"apres iteration:";
             displayDatePlusTot();
         #endif // DEBUG
 
     }
 
     #if DEBUG == 1
-        cout<<":DEBUG"<<endl;
+        log_file<<":"<<endl;
     #endif // DEBUG
 }
 
@@ -1628,17 +1683,26 @@ void Graphe::displayDatePlusTot(){
     cout<<endl;
     cout<<endl;
 
+    log_file<<endl;
+    log_file<<endl;
+
 
     cout<< "Dates au plus tot des etats" <<endl;
+    log_file<< "Dates au plus tot des etats" <<endl;
     for(unsigned int i=0; i< tabEtats.size(); i++){
         cout<< setw(SPACE) << left << tabEtats[i]->getNom()<< "  ";
+        log_file<< setw(SPACE) << left << tabEtats[i]->getNom()<< "  ";
     }
     cout<<endl;
+    log_file<<endl;
     for(unsigned int i=0; i< tabEtats.size(); i++){
         cout<< setw(SPACE) << left<< tabEtats[i]->getDatePlusTot() << "  ";
+        log_file<< setw(SPACE) << left<< tabEtats[i]->getDatePlusTot() << "  ";
     }
     cout<<endl;
     cout<<endl;
+    log_file<<endl;
+    log_file<<endl;
 }
 
 void Graphe::calcDatePlusTard(float pourcentageDatePlusTard){
@@ -1669,9 +1733,9 @@ void Graphe::calcDatePlusTard(float pourcentageDatePlusTard){
     file.push_back(tabPointSorties[0]->getNom());
 
     #if DEBUG == 1
-        cout<<endl;
-        cout<<endl;
-        cout<<"DEBUG: calcul de la date au plus tard"<<endl;
+        log_file<<endl;
+        log_file<<endl;
+        log_file<<"DEBUG: calcul de la date au plus tard"<<endl;
         int iteration = 0;
     #endif // DEBUG
 
@@ -1681,17 +1745,17 @@ void Graphe::calcDatePlusTard(float pourcentageDatePlusTard){
 
 
         #if DEBUG == 1
-            cout<< "-----------------------"<<endl;
-            cout<<"Iteration : "<<iteration<<endl;
-            cout<<"La file avant iteration: "<<endl;
+            log_file<< "-----------------------"<<endl;
+            log_file<<"Iteration : "<<iteration<<endl;
+            log_file<<"La file avant iteration: "<<endl;
 
             for(unsigned int i = 0; i<file.size(); i++)
-                cout<<file[i]<< " ";
-            cout<<endl;
+                log_file<<file[i]<< " ";
+            log_file<<endl;
             iteration++;
 
 
-            cout<<endl;
+            log_file<<endl;
 
         #endif // DEBUG
 
@@ -1747,14 +1811,14 @@ void Graphe::calcDatePlusTard(float pourcentageDatePlusTard){
         }
         file.erase(file.begin());
         #if DEBUG == 1
-            cout<<endl;
-            cout<<"La file apres iteration: "<<endl;
+            log_file<<endl;
+            log_file<<"La file apres iteration: "<<endl;
 
             for(unsigned int i = 0; i<file.size(); i++)
-                cout<<file[i]<< " ";
-            cout<<endl;
-            cout<<endl;
-            cout<<"apres iteration:";
+                log_file<<file[i]<< " ";
+            log_file<<endl;
+            log_file<<endl;
+            log_file<<"apres iteration:";
             displayDatePlusTard();
         #endif // DEBUG
 
@@ -1762,7 +1826,7 @@ void Graphe::calcDatePlusTard(float pourcentageDatePlusTard){
 
 
     #if DEBUG == 1
-        cout<<":DEBUG"<<endl;
+        log_file<<":DEBUG"<<endl;
     #endif // DEBUG
 
 }
@@ -1771,17 +1835,27 @@ void Graphe::displayDatePlusTard(){
     cout<<endl;
     cout<<endl;
 
+    log_file<<endl;
+    log_file<<endl;
+
 
     cout<< "Dates au plus tard des etats" <<endl;
+    log_file<< "Dates au plus tard des etats" <<endl;
     for(unsigned int i=0; i< tabEtats.size(); i++){
         cout<< setw(SPACE) << left << tabEtats[i]->getNom()<< "  ";
+        log_file<< setw(SPACE) << left << tabEtats[i]->getNom()<< "  ";
     }
     cout<<endl;
+    log_file<<endl;
     for(unsigned int i=0; i< tabEtats.size(); i++){
         cout<< setw(SPACE) << left<< tabEtats[i]->getDatePlusTard() << "  ";
+        log_file<< setw(SPACE) << left<< tabEtats[i]->getDatePlusTard() << "  ";
     }
     cout<<endl;
     cout<<endl;
+
+    log_file<<endl;
+    log_file<<endl;
 }
 
 
@@ -1811,8 +1885,10 @@ void Graphe::affichageMarge(){
 }
 
 void Graphe::niveau2(){
-
-    Log::write_to_log("Niveau2:\n\n");
+    log_file<<endl;
+    log_file<<"---------------------------------------------"<<endl;
+    log_file<<"Niveau 2 :"<<endl;
+    log_file<<endl;
     if(this->importe){
 
         displayGraphe();
@@ -1951,12 +2027,12 @@ void Graphe::creerPointEntree(){
 
 
     #if DEBUG == 1
-        cout<< "DEBUG:"<<endl;
-        cout<<"Nouveau graphe avec le point d'entree alpha ajoute (nom: 0): "<<endl;
+        log_file<< "DEBUG:"<<endl;
+        log_file<<"Nouveau graphe avec le point d'entree alpha ajoute (nom: 0): "<<endl;
         displayEtatToMatriceAdjIncid();
-        cout<<"Fonction Creer point d'entree, test de creation des matrices a partir du nouveau graphe"<<endl;
+        log_file<<"Fonction Creer point d'entree, test de creation des matrices a partir du nouveau graphe"<<endl;
         displayGraphe();
-        cout<< ":DEBUG"<<endl;
+        log_file<< ":DEBUG"<<endl;
     #endif // DEBUG
 
 
@@ -2029,13 +2105,13 @@ void Graphe::creerPointSortie(){
 
 
     #if DEBUG == 1
-        cout<< "DEBUG:"<<endl;
+        log_file<< "DEBUG:"<<endl;
         // nbSomment - 1 car on vient de l'incrementer
-        cout<<"Nouveau graphe avec le point de sortie omega ajoute (nom:" << this->nbSommet - 1<< "): "<<endl;
+        log_file<<"Nouveau graphe avec le point de sortie omega ajoute (nom:" << this->nbSommet - 1<< "): "<<endl;
         displayEtatToMatriceAdjIncid();
-        cout<<"Fonction Creer point de sortie, test de creation des matrices a partir du nouveau graphe"<<endl;
+        log_file<<"Fonction Creer point de sortie, test de creation des matrices a partir du nouveau graphe"<<endl;
         displayGraphe();
-        cout<< ":DEBUG"<<endl;
+        log_file<< ":DEBUG"<<endl;
     #endif // DEBUG
 
 
@@ -2043,7 +2119,11 @@ void Graphe::creerPointSortie(){
 }
 
 void Graphe::niveau3(){
-            Log::write_to_log("Niveau3:\n\n");
+
+    log_file<<endl;
+    log_file<<"---------------------------------------------"<<endl;
+    log_file<<"Niveau 3 :"<<endl;
+    log_file<<endl;
     if(this->importe){
 
          cout<< "Apres import"<<endl;
@@ -2156,7 +2236,11 @@ void Graphe::niveau3(){
 }
 
 void Graphe::niveau4(){
-            Log::write_to_log("Niveau4:\n\n");
+
+    log_file<<endl;
+    log_file<<"---------------------------------------------"<<endl;
+    log_file<<"Niveau 4 :"<<endl;
+    log_file<<endl;
     if(this->importe){
 
          cout<< "Apres import"<<endl;

@@ -14,3 +14,11 @@ void Log::write_to_log( const std::string &text ){
     log_file << text << std::endl;
 
 }
+
+void Log::write_to_log( const int i ){
+
+    std::ofstream log_file(
+        "A10log_file.txt", std::ios_base::out | std::ios_base::app );
+    log_file << i << std::endl;
+
+}

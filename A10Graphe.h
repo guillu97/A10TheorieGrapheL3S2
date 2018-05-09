@@ -19,7 +19,8 @@
 #include "A10Etat.h"
 #include "A10log.h"
 
-#define DEBUG 0
+#define DEBUG 1
+#define LOG 1
 
 class Graphe {
 
@@ -69,7 +70,9 @@ public:
 
 
     bool** grapheToMatAdj();
+
     int** grapheToMatInc();
+
 
     void recherchePointsEntrees();
     void displayPointEntrees();
@@ -110,6 +113,10 @@ public:
 
     void copieGrapheInteract(Graphe* autreGraphe);
     Graphe(Graphe* autreGraphe);
+
+    bool** grapheToMatAdjContraintes();
+
+    int** grapheToMatIncContraintes();
 
 
     void calcDatePlusTot();

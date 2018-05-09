@@ -1,1 +1,3 @@
-DEBUG : lecture du fichier txt 
+LOG : lecture du fichier txt 
+LOG : lecture du fichier txt 
+LOG : lecture du fichier txt 

@@ -19,7 +19,7 @@
 #include "A10Etat.h"
 #include "A10log.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #define LOG 1
 
 class Graphe {

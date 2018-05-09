@@ -447,7 +447,7 @@ bool Graphe::remplirGrapheInteract(){
                         //we add the successor to the tabEtats
             if(matAdj[etatDebut][etatFin]){
                 this->tabEtats[etatDebut]->ajoutSuccesseur(tabEtats[etatFin], this->matInc[etatDebut][etatFin]);
-                this->tabEtats[etatFin]->ajoutPredecesseur(tabEtats[etatDebut], this->matInc[etatFin][etatDebut]);
+                this->tabEtats[etatFin]->ajoutPredecesseur(tabEtats[etatDebut], this->matInc[etatDebut][etatFin]);
 
 
                 vector <Etat*> circuit = this->detectionCircuitInteract();
@@ -787,6 +787,12 @@ void Graphe::affichageGraphe(){
         cout<< "predecesseurs: [ ";
         for(unsigned int j = 0; j<tabEtats[i]->predecesseurs.size(); j++){
             cout << tabEtats[i]->predecesseurs[j]->getNom() << " ";
+        }
+        cout <<"]"<<endl;
+
+        cout<< "PoidsPredecesseurs: [ ";
+        for(unsigned int j = 0; j<tabEtats[i]->predecesseurs.size(); j++){
+            cout << tabEtats[i]->poidsPredecesseur[j] << " ";
         }
         cout <<"]"<<endl;
     }
@@ -1634,7 +1640,6 @@ void Graphe::calcDatePlusTard(float pourcentageDatePlusTard){
     vector<int>file;
 
 
-
     int datePlusTardOmega = 0;
     for(unsigned int i=0; i<tabEtats.size(); i++){
         if(datePlusTardOmega <= tabEtats[i]->getDatePlusTot())
@@ -1648,9 +1653,11 @@ void Graphe::calcDatePlusTard(float pourcentageDatePlusTard){
     }
 
 
+    recherchePointsSorties();
         // ici on sait que le graphe n'a qu'un point dde sortie, on l'ajoute au tableau
         // on met la date au plus tard du projet sur omega
     tabPointSorties[0]->setDatePlusTard(datePlusTardOmega);
+
 
 
     // on met omega dans la file
@@ -1664,6 +1671,9 @@ void Graphe::calcDatePlusTard(float pourcentageDatePlusTard){
     #endif // DEBUG
 
     while(!file.empty()){
+
+
+
 
         #if DEBUG == 1
             cout<< "-----------------------"<<endl;
@@ -1689,7 +1699,8 @@ void Graphe::calcDatePlusTard(float pourcentageDatePlusTard){
         unsigned int i = 0;
 
 
-        while(i != tabEtats.size() && tabEtats[i]->getNom() != pile[pointeur]){
+        while(i != tabEtats.size() && tabEtats[i]->
+                () != pile[pointeur]){
                 i++;
                 pos = i;
         }
@@ -1712,6 +1723,8 @@ void Graphe::calcDatePlusTard(float pourcentageDatePlusTard){
             int datePlusTardEtat = tabEtats[pos]->getDatePlusTard();
 
 
+
+
             // on ajoute les predecesseurs à la file
             for(unsigned int i=0; i < tailleTabPredecesseurs ; i++){
 
@@ -1723,6 +1736,8 @@ void Graphe::calcDatePlusTard(float pourcentageDatePlusTard){
 
                 file.push_back(tabEtats[pos]->predecesseurs[i]->getNom());
             }
+
+
 
         }
         file.erase(file.begin());
@@ -1739,6 +1754,7 @@ void Graphe::calcDatePlusTard(float pourcentageDatePlusTard){
         #endif // DEBUG
 
     }
+
 
     #if DEBUG == 1
         cout<<":DEBUG"<<endl;
@@ -1958,9 +1974,9 @@ void Graphe::creerPointSortie(){
     for(unsigned int i=0; i<tabPointSorties.size(); i++){
 
 
-
         // ajout des predecesseurs d'omega
         omega->ajoutPredecesseur(tabPointSorties[i], tabPoidsEtat[tabPointSorties[i]->getNom() - 1]);
+
 
         // ajout des predecesseurs vers omega
         tabPointSorties[i]->ajoutSuccesseur(omega,tabPoidsEtat[tabPointSorties[i]->getNom() - 1]);
@@ -1973,6 +1989,8 @@ void Graphe::creerPointSortie(){
 
     // nouveau tableau des points de sortie
     tabPointSorties.erase(tabPointSorties.begin(), tabPointSorties.end());
+    for(unsigned int i=0; i<tabPointSorties.size(); i++)
+        tabPointSorties = this->suppr(tabPointSorties, tabPointSorties[i]);
     tabPointSorties.push_back(omega);
 
 

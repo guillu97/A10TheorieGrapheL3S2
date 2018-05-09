@@ -2,8 +2,8 @@
 // Created by SPORE on 06/03/2018.
 //
 
-#ifndef A10THEORIEGRAPHEL3S2_GRAPHE_H
-#define A10THEORIEGRAPHEL3S2_GRAPHE_H
+#ifndef A10THEORIEGRAPHEL3S2_A10GRAPHE_H
+#define A10THEORIEGRAPHEL3S2_A10GRAPHE_H
 
 #include <string>
 #include <iostream>
@@ -15,9 +15,10 @@
 #include <vector>
 
 
-#include "Etat.h"
+#include "A10Etat.h"
+#include "A10log.h"
 
-#define DEBUG 0
+#define DEBUG 1
 
 class Graphe {
 
@@ -126,4 +127,4 @@ public:
 };
 
 
-#endif //A10THEORIEGRAPHEL3S2_GRAPHE_H
+#endif //A10THEORIEGRAPHEL3S2_A10GRAPHE_H

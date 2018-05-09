@@ -3,7 +3,7 @@
 //
 
 
-#include "Graphe.h"
+#include "A10Graphe.h"
 #define SPACE 3
 
 
@@ -109,6 +109,7 @@ bool Graphe::importGraphe(string fileName) {
         int etatDebut, etatFin, poids;
 
         #if DEBUG == 1
+                //Log::write_to_log("DEBUG : lecture du fichier txt ");
                 cout <<"DEBUG : lecture du fichier txt "<<endl;
         #endif // DEBUG
 

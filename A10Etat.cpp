@@ -18,6 +18,8 @@ Etat::Etat(unsigned int nom) {
     this->datePlusTard = 0;
     this->marge = 0;
 
+
+
 }
 
 Etat::Etat(Etat& a){

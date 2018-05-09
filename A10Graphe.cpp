@@ -12,6 +12,8 @@
 
 using namespace std;
 
+
+
 Graphe::Graphe(string fileName, int level) {
     this->fileName = fileName;
 
@@ -31,6 +33,7 @@ Graphe::Graphe(string fileName, int level) {
             this->importe = false;
     }
 
+
 }
 
 Graphe::Graphe(Graphe const& autreGraphe) {
@@ -39,6 +42,7 @@ Graphe::Graphe(Graphe const& autreGraphe) {
 
     this->nbSommet = autreGraphe.nbSommet;
     this->nbArc = autreGraphe.nbArc;
+
 
     // créer tableau de booléen 2d   (matrice carrée de hauteur nb sommet)  toutes les cases sont copiées
     this->matAdj = new bool*[this->nbSommet];
@@ -60,6 +64,21 @@ Graphe::Graphe(Graphe const& autreGraphe) {
 
         }
     }
+
+
+    this->remplirGraphe();
+}
+
+Graphe::Graphe(Graphe* autreGraphe){
+
+    this->fileName = autreGraphe->fileName;
+
+    this->nbSommet = autreGraphe->nbSommet;
+    this->nbArc = autreGraphe->nbArc;
+
+    this->matAdj = autreGraphe->grapheToMatAdj();
+    this->matInc = autreGraphe->grapheToMatInc();
+
 
 
     this->remplirGraphe();
@@ -101,7 +120,11 @@ bool Graphe::importGraphe(string fileName) {
     file.seekg(ios_base::beg);
 
 
-    if(grapheNormal){
+    if(!grapheNormal){
+        cout<< "Le fichier n'est pas dans le bon format, c'est peut etre un tableau de contrainte" <<endl;
+        cout<<endl;
+        return false;
+    }
                     // instructions
 
         file >> this->nbSommet;
@@ -182,19 +205,15 @@ bool Graphe::importGraphe(string fileName) {
 
         file.close();  // on ferme le fichier
 
-    }
-    else{
-        cout<< "Le fichier n'est pas dans le bon format, c'est peut etre un tableau de contrainte" <<endl;
-    }
+
+
 
 
 
     if(this->matAdj && this->matInc){
-        this->importe = true;
         return true;
     }
     else{
-        this->importe = false;
         return false;
     }
 
@@ -208,9 +227,10 @@ bool Graphe::importContrainte(string fileName){
     if (!file){
         // si l'ouverture n'a pas réussi
         cerr << "Impossible d'ouvrir le fichier !" << endl;
+
         return false;
     }
-/*
+
 
         // Un test pour voir si on envoie un graphe de contraintes à cette fonction
 
@@ -222,86 +242,92 @@ bool Graphe::importContrainte(string fileName){
 
     std::size_t pos = temp.find(" ");      // position of " " in str
 
-    bool grapheNormal = false;
+    bool grapheContraintes = true;
     // si l'on ne trouve pas d'espace sur la deuxième ligne
     if(pos == string::npos)
-        grapheNormal = true;
+        grapheContraintes = false;
 
         // met le curseur de lecture du fichier au debut
     file.seekg(ios_base::beg);
 
 
-    if(grapheNormal){*/
+    if(!grapheContraintes){
+        cout<< "Le fichier n'est pas dans le bon format, ce n'est pas un tableau de contrainte" <<endl;
+        cout<<endl;
+        return false;
+    }
 
 
 
 
-    file>>this->nbSommet;
+        file>>this->nbSommet;
 
-    // créer tableau de booléen 2d   (matrice carrée de hauteur nb sommet)  toutes les cases sont initialisées à false
-    matAdj = new bool*[this->nbSommet];
-    for(int i = 0; i < this->nbSommet; i++)
-    {
-        matAdj[i] = new bool[this->nbSommet];
-        for(int j = 0; j <this->nbSommet; j++){
-            matAdj[i][j] = false;
+        // créer tableau de booléen 2d   (matrice carrée de hauteur nb sommet)  toutes les cases sont initialisées à false
+        matAdj = new bool*[this->nbSommet];
+        for(int i = 0; i < this->nbSommet; i++)
+        {
+            matAdj[i] = new bool[this->nbSommet];
+            for(int j = 0; j <this->nbSommet; j++){
+                matAdj[i][j] = false;
+            }
         }
-    }
 
-    // créer tableau de int 2d  (matrice carrée de hauteur nb sommet) toutes les cases sont initialisées à 0
-    matInc = new int*[this->nbSommet];
-    for(int i = 0; i < this->nbSommet; i++)
-    {
-        matInc[i] = new int[this->nbSommet];
-        for(int j = 0; j <this->nbSommet; j++){
-            matInc[i][j] = 0;
-
-        }
-    }
-
-
-    //Tableau qui contient les poids de chaque Etat
-    int* tableauPoid = new int[this->nbSommet];
-    for(int i = 0; i < this->nbSommet; i++){
-        int lEtat;
-        int lePoid;
-        file >> lEtat;
-        file >> lePoid;
-        tableauPoid[lEtat-1] = lePoid;
-    }
-
-    //  sauvegarde de ce tableau, car on en a besoin pour la creation des points de sorties
-    tabPoidsEtat = tableauPoid;
-
-    cout << "Contrainte" << endl;
-    for(int i = 0; i < this->nbSommet; i++){
-
-            int lEtat;
-            file >> lEtat;
-            int lePredecesseur;
-            file >> lePredecesseur;
-            cout << "Sommet " << lEtat << "  ";
-            while(lePredecesseur != 0){
-                matAdj[lePredecesseur-1][lEtat-1] = true;
-                matInc[lePredecesseur-1][lEtat-1] = tableauPoid[lePredecesseur-1];
-                cout << lePredecesseur << " ";
-                file >> lePredecesseur;
+        // créer tableau de int 2d  (matrice carrée de hauteur nb sommet) toutes les cases sont initialisées à 0
+        matInc = new int*[this->nbSommet];
+        for(int i = 0; i < this->nbSommet; i++)
+        {
+            matInc[i] = new int[this->nbSommet];
+            for(int j = 0; j <this->nbSommet; j++){
+                matInc[i][j] = 0;
 
             }
-            cout << endl;
+        }
 
-    }
 
-    if(this->remplirGrapheInteract()){
-        this->displayGraphe();
-        this->displayEtatToMatriceAdjIncid();
-        return true;
-    }
-    else
-        return false;
+        //Tableau qui contient les poids de chaque Etat
+        int* tableauPoid = new int[this->nbSommet];
+        for(int i = 0; i < this->nbSommet; i++){
+            int lEtat;
+            int lePoid;
+            file >> lEtat;
+            file >> lePoid;
+            tableauPoid[lEtat-1] = lePoid;
+        }
+
+        //  sauvegarde de ce tableau, car on en a besoin pour la creation des points de sorties
+        tabPoidsEtat = tableauPoid;
+
+        cout << "Contrainte" << endl;
+        for(int i = 0; i < this->nbSommet; i++){
+
+                int lEtat;
+                file >> lEtat;
+                int lePredecesseur;
+                file >> lePredecesseur;
+                cout << "Sommet " << lEtat << "  ";
+                while(lePredecesseur != 0){
+                    matAdj[lePredecesseur-1][lEtat-1] = true;
+                    matInc[lePredecesseur-1][lEtat-1] = tableauPoid[lePredecesseur-1];
+                    cout << lePredecesseur << " ";
+                    file >> lePredecesseur;
+
+                }
+                cout << endl;
+
+        }
+        if(this->remplirGrapheInteract()){
+            this->displayGraphe();
+            this->displayEtatToMatriceAdjIncid();
+            return true;
+        }
+        else
+            return false;
+
 
 
 }
+
+
 /**
 *   fonction qui remplit le graphe (tabEtat) à partir de la matrice d'adjacence et de la matrice d'incicdence
 */
@@ -402,18 +428,17 @@ bool Graphe::remplirGrapheInteract(){
         for(int etatFin = 0; etatFin < this->nbSommet; etatFin++){
                         //we add the successor to the tabEtats
             if(matAdj[etatDebut][etatFin]){
-                tabEtats[etatDebut]->ajoutSuccesseur(tabEtats[etatFin], this->matInc[etatDebut][etatFin]);
-                tabEtats[etatFin]->ajoutPredecesseur(tabEtats[etatDebut], this->matInc[etatFin][etatDebut]);
+                this->tabEtats[etatDebut]->ajoutSuccesseur(tabEtats[etatFin], this->matInc[etatDebut][etatFin]);
+                this->tabEtats[etatFin]->ajoutPredecesseur(tabEtats[etatDebut], this->matInc[etatFin][etatDebut]);
+
 
                 vector <Etat*> circuit = this->detectionCircuitInteract();
 
-                displayEtatToMatriceAdjIncid();
-                cout<< "etat debut: "<< etatDebut + 1<<endl;
-                cout<< "etat fin: "<< etatFin + 1<<endl;
-                    cout<<"circuit"<<endl;
-                for(unsigned int i=0; i<circuit.size(); i++){
-                    cout<<circuit[i]->getNom()<<endl;
-                }
+                #if DEBUG == 1
+                    displayEtatToMatriceAdjIncid();
+                #endif // DEBUG
+
+
 
                 if(!circuit.empty()){   // s'il y a un circuit
                     pasDeCircuit = false;
@@ -432,8 +457,15 @@ bool Graphe::remplirGrapheInteract(){
                         }
                     }
                     cout<<endl;
+                    cout<<"Les etats suivant appartiennent a un circuit"<<endl;
+                    for(unsigned int i=0; i<circuit.size(); i++){
+                        cout<<circuit[i]->getNom()<< " ";
+                    }
+                    cout<<endl;
+                    cout<<endl;
+                    cout<<endl;
 
-                    return pasDeCircuit;
+
                 }
             }
         }
@@ -1040,23 +1072,30 @@ bool Graphe::detectionCircuit(){
 
 
 vector<Etat*> Graphe::detectionCircuitInteract(){
-    Graphe copieGraphe = *this;
+    Graphe copieGraphe = this;
+
+   // copieGraphe.copieGrapheInteract(*this);
 
 
-    // on ajoute  + 1 pour le nom
-    for(unsigned int i = 0; i<copieGraphe.tabEtats.size(); i++)
-        copieGraphe.tabEtats[i]->setNom(copieGraphe.tabEtats[i]->getNom() + 1);
+
+
+
+
+
+
+
 
 
     vector<Etat*> circuit;
 
+
+
     copieGraphe.recherchePointsEntrees();
+
+
+
     while(copieGraphe.tabPointEntrees.size() != 0 && copieGraphe.tabEtats.size() != 0){
 
-        cout<<"points d'entrees"<<endl;
-        for(unsigned int i = 0; i<copieGraphe.tabPointEntrees.size(); i++){
-            cout<<copieGraphe.tabPointEntrees[i]->getNom() <<endl;
-        }
 
         for(unsigned int i = 0; i<copieGraphe.tabPointEntrees.size(); i++){
 

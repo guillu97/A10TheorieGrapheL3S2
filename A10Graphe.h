@@ -108,6 +108,9 @@ public:
 
     std::vector<Etat*> detectionCircuitInteract();
 
+    void copieGrapheInteract(Graphe* autreGraphe);
+    Graphe(Graphe* autreGraphe);
+
 
     void calcDatePlusTot();
     void displayDatePlusTot();

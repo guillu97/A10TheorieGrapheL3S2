@@ -17,6 +17,7 @@ Graphe::Graphe(string fileName, int level) {
 
     this->nbSommet = 0;
     this->nbArc = 0;
+    this->importe = false;
 
     if (level == 3 || level == 4){
         if(importContrainte(fileName))
@@ -70,14 +71,46 @@ bool Graphe::importGraphe(string fileName) {
     ifstream file(fileName.c_str(), ios::in);  // on ouvre le fichier en lecture, le fichier est dans le même dossier que l'executable
 
 
-    if(file)  // si l'ouverture a réussi
-    {
+    if(!file){  // si l'ouverture n'a pas réussi
+        cerr << "Impossible d'ouvrir le fichier !" << endl;
+        return false;
+    }
 
 
-        // instructions
+
+
+
+
+    // Un test pour voir si on envoie un graphe de contraintes à cette fonction
+
+
+    string temp = "";
+    getline(file, temp);
+    getline(file, temp);
+
+
+
+    std::size_t pos = temp.find(" ");      // position of " " in str
+
+    bool grapheNormal = false;
+    // si l'on ne trouve pas d'espace sur la deuxième ligne
+    if(pos == string::npos)
+        grapheNormal = true;
+
+        // met le curseur de lecture du fichier au debut
+    file.seekg(ios_base::beg);
+
+
+    if(grapheNormal){
+                    // instructions
 
         file >> this->nbSommet;
+
+
+
         file >> this->nbArc;
+
+
 
 
 
@@ -144,19 +177,17 @@ bool Graphe::importGraphe(string fileName) {
         #endif // DEBUG
 
 
-    // test
+        // test
         this->remplirGraphe();
 
         file.close();  // on ferme le fichier
 
+    }
+    else{
+        cout<< "Le fichier n'est pas dans le bon format, c'est peut etre un tableau de contrainte" <<endl;
+    }
 
 
-    }
-    else{  // sinon
-        cerr << "Impossible d'ouvrir le fichier !" << endl;
-        this->importe = false;
-        return false;
-    }
 
     if(this->matAdj && this->matInc){
         this->importe = true;
@@ -167,13 +198,46 @@ bool Graphe::importGraphe(string fileName) {
         return false;
     }
 
+
 }
 
 
 bool Graphe::importContrainte(string fileName){
     ifstream file(fileName.c_str(), ios::in);  // on ouvre le fichier en lecture, le fichier est dans le même dossier que l'executable
+
+    if (!file){
+        // si l'ouverture n'a pas réussi
+        cerr << "Impossible d'ouvrir le fichier !" << endl;
+        return false;
+    }
+/*
+
+        // Un test pour voir si on envoie un graphe de contraintes à cette fonction
+
+    string temp = "";
+    getline(file, temp);
+    getline(file, temp);
+
+
+
+    std::size_t pos = temp.find(" ");      // position of " " in str
+
+    bool grapheNormal = false;
+    // si l'on ne trouve pas d'espace sur la deuxième ligne
+    if(pos == string::npos)
+        grapheNormal = true;
+
+        // met le curseur de lecture du fichier au debut
+    file.seekg(ios_base::beg);
+
+
+    if(grapheNormal){*/
+
+
+
+
     file>>this->nbSommet;
-    if (!file) return false;
+
     // créer tableau de booléen 2d   (matrice carrée de hauteur nb sommet)  toutes les cases sont initialisées à false
     matAdj = new bool*[this->nbSommet];
     for(int i = 0; i < this->nbSommet; i++)
@@ -334,31 +398,42 @@ bool Graphe::remplirGrapheInteract(){
 
     bool pasDeCircuit = true;
 
-    for(int etatDebut = 0; etatDebut<this->nbSommet; etatDebut++){
-        for(int etatFin = 0; etatFin<this->nbSommet; etatFin++){
+    for(int etatDebut = 0; etatDebut < this->nbSommet; etatDebut++){
+        for(int etatFin = 0; etatFin < this->nbSommet; etatFin++){
                         //we add the successor to the tabEtats
             if(matAdj[etatDebut][etatFin]){
                 tabEtats[etatDebut]->ajoutSuccesseur(tabEtats[etatFin], this->matInc[etatDebut][etatFin]);
-                tabEtats[etatFin]->ajoutPredecesseur(tabEtats[etatDebut], this->matInc[etatDebut][etatFin]);
+                tabEtats[etatFin]->ajoutPredecesseur(tabEtats[etatDebut], this->matInc[etatFin][etatDebut]);
 
                 vector <Etat*> circuit = this->detectionCircuitInteract();
-                if(!circuit.empty()){
+
+                displayEtatToMatriceAdjIncid();
+                cout<< "etat debut: "<< etatDebut + 1<<endl;
+                cout<< "etat fin: "<< etatFin + 1<<endl;
+                    cout<<"circuit"<<endl;
+                for(unsigned int i=0; i<circuit.size(); i++){
+                    cout<<circuit[i]->getNom()<<endl;
+                }
+
+                if(!circuit.empty()){   // s'il y a un circuit
                     pasDeCircuit = false;
 
 
                     // il y a un problème lors de la prise en  compte de la contrainte ‘A a besoin de C’
                     // avec les contraintes déjà intégrées ‘B a besoin de A’ et ‘C a besoin de B’
                     cout<<"Il y a un probleme lors de la prise en  compte de la contrainte \'"
-                    << etatDebut + 1 <<" a besoin de "<<  etatFin + 1<<"\' "
+                    <<  etatFin + 1 <<" a besoin de "<<  etatDebut + 1<<"\' "
                     <<"avec les contraintes deja integrees: "<<endl;
                     for(unsigned int i=0; i<circuit.size(); i++){
                         if(circuit[i]->getNom() != etatDebut + 1){
                             for(unsigned int j=0; j<circuit[i]->successeurs.size(); j++)
-                                cout<<"\'"<<circuit[i]->getNom()<< " a besoin de "<< circuit[i]->successeurs[j]->getNom()
+                                cout<<"\'"<<circuit[i]->successeurs[j]->getNom()<< " a besoin de "<<  circuit[i]->getNom()
                                 <<"\'"<<endl;
                         }
                     }
                     cout<<endl;
+
+                    return pasDeCircuit;
                 }
             }
         }
@@ -774,10 +849,37 @@ void Graphe::displayPointSorties(){
     }
 }
 
+vector<Etat*> Graphe::suppr(vector<Etat*> tab, Etat* etat){
+    vector<Etat*> temp;
+    for(unsigned int i=0; i<tab.size(); i++){
+        if(tab[i]->getNom() != etat->getNom())
+            temp.push_back(tab[i]);
+    }
+    return temp;
+}
 
+vector<int> Graphe::suppr(vector<int> tab, int poids){
+    vector<int> temp;
+    for(unsigned int i=0; i<tab.size(); i++){
+        if(tab[i] != poids)
+            temp.push_back(tab[i]);
+    }
+    return temp;
+}
 
 void Graphe::supprEtat(Etat* etat){
-    int posEtatInTabEtat = chercherPosEtatDansTab(etat, tabEtats);
+    //int posEtatInTabEtat = chercherPosEtatDansTab(etat, tabEtats);
+
+    int posEtatInTabEtat= -1;
+    for(unsigned int pos = 0; pos<this->tabEtats.size(); pos++){
+        if(this->tabEtats[pos]->getNom() == etat->getNom()){
+            posEtatInTabEtat = pos;
+        }
+    }
+
+    if(posEtatInTabEtat == -1){
+        cout<<"etat non trouve"<<endl;
+    }
 
     // si on trouve l'etat à supprimer
     if(posEtatInTabEtat != -1){
@@ -795,6 +897,13 @@ void Graphe::supprEtat(Etat* etat){
 
             if(posEtatInTabPredecesseur != -1){
                 // ici on passe par le vrai tableau et non par la copie
+
+
+
+                tabEtats[posEtatInTabEtat]->successeurs[i]->predecesseurs =
+                this->suppr(tabEtats[posEtatInTabEtat]->successeurs[i]->predecesseurs, tabEtats[posEtatInTabEtat]->successeurs[i]->predecesseurs[posEtatInTabPredecesseur]  );
+
+                /*
                 tabEtats[posEtatInTabEtat]
                 ->successeurs[i]
                 ->predecesseurs
@@ -802,8 +911,15 @@ void Graphe::supprEtat(Etat* etat){
                     ->successeurs[i]
                     ->predecesseurs.begin()
                        + posEtatInTabPredecesseur);
+                       */
 
 
+                tabEtats[posEtatInTabEtat]
+                ->successeurs[i]
+                ->poidsPredecesseur = this->suppr(tabEtats[posEtatInTabEtat]->successeurs[i]->poidsPredecesseur,
+                                                   tabEtats[posEtatInTabEtat]->successeurs[i]->poidsPredecesseur[posEtatInTabPredecesseur]);
+
+                    /*
                 tabEtats[posEtatInTabEtat]
                 ->successeurs[i]
                 ->poidsPredecesseur
@@ -811,6 +927,7 @@ void Graphe::supprEtat(Etat* etat){
                     ->successeurs[i]
                     ->poidsPredecesseur.begin()
                        + posEtatInTabPredecesseur);
+                       */
 
             }
 
@@ -820,6 +937,16 @@ void Graphe::supprEtat(Etat* etat){
 
             if(posEtatInTabSuccesseur != -1){
                 // ici on passe par le vrai tableau pet non par la copie
+
+                tabEtats[posEtatInTabEtat]
+                ->successeurs[i]
+                ->successeurs = this->suppr(tabEtats[posEtatInTabEtat]
+                ->successeurs[i]
+                ->successeurs, tabEtats[posEtatInTabEtat]
+                ->successeurs[i]
+                ->successeurs[posEtatInTabSuccesseur]);
+
+                /*
                 tabEtats[posEtatInTabEtat]
                 ->successeurs[i]
                 ->successeurs
@@ -827,7 +954,17 @@ void Graphe::supprEtat(Etat* etat){
                     ->successeurs[i]
                     ->successeurs.begin()
                        + posEtatInTabSuccesseur);
+                       */
 
+                tabEtats[posEtatInTabEtat]
+                ->successeurs[i]
+                ->poidsSuccesseur = this->suppr(tabEtats[posEtatInTabEtat]
+                ->successeurs[i]
+                ->poidsSuccesseur, tabEtats[posEtatInTabEtat]
+                ->successeurs[i]
+                ->poidsSuccesseur[posEtatInTabPredecesseur]);
+
+                /*
                 tabEtats[posEtatInTabEtat]
                 ->successeurs[i]
                 ->poidsSuccesseur
@@ -835,10 +972,12 @@ void Graphe::supprEtat(Etat* etat){
                 ->successeurs[i]
                 ->poidsSuccesseur.begin()
                    + posEtatInTabPredecesseur);
+                   */
             }
         }
 
-        tabEtats.erase(tabEtats.begin() + posEtatInTabEtat);
+        tabEtats = this->suppr(tabEtats, tabEtats[posEtatInTabEtat]);
+        //tabEtats.erase(tabEtats.begin() + posEtatInTabEtat);
     }
 }
 
@@ -863,11 +1002,21 @@ bool Graphe::detectionCircuit(){
     copieGraphe.recherchePointsEntrees();
     while(copieGraphe.tabPointEntrees.size() != 0 && copieGraphe.tabEtats.size() != 0){
         for(unsigned int i = 0; i<copieGraphe.tabPointEntrees.size(); i++){
+
+
+
+
+
             // on supprime le point d'entree du graphe copié
             copieGraphe.supprEtat(copieGraphe.tabPointEntrees[i]);
 
-            // on supprime l'etat du tableau des points d'entrees car on vient de le traité
-            copieGraphe.tabPointEntrees.erase(copieGraphe.tabPointEntrees.begin() + i);
+
+
+            // on supprime l'etat du tableau des points d'entrees car on vient de le traiter
+
+            copieGraphe.tabPointEntrees = copieGraphe.suppr(copieGraphe.tabPointEntrees, copieGraphe.tabPointEntrees[i]);
+            //copieGraphe.tabPointEntrees.erase(copieGraphe.tabPointEntrees.begin() + i);
+
         }
         copieGraphe.recherchePointsEntrees();
     }
@@ -887,6 +1036,9 @@ bool Graphe::detectionCircuit(){
 
 }
 
+
+
+
 vector<Etat*> Graphe::detectionCircuitInteract(){
     Graphe copieGraphe = *this;
 
@@ -900,12 +1052,26 @@ vector<Etat*> Graphe::detectionCircuitInteract(){
 
     copieGraphe.recherchePointsEntrees();
     while(copieGraphe.tabPointEntrees.size() != 0 && copieGraphe.tabEtats.size() != 0){
+
+        cout<<"points d'entrees"<<endl;
         for(unsigned int i = 0; i<copieGraphe.tabPointEntrees.size(); i++){
+            cout<<copieGraphe.tabPointEntrees[i]->getNom() <<endl;
+        }
+
+        for(unsigned int i = 0; i<copieGraphe.tabPointEntrees.size(); i++){
+
+
+
+
             // on supprime le point d'entree du graphe copié
             copieGraphe.supprEtat(copieGraphe.tabPointEntrees[i]);
 
-            // on supprime l'etat du tableau des points d'entrees car on vient de le traité
-            copieGraphe.tabPointEntrees.erase(copieGraphe.tabPointEntrees.begin() + i);
+
+            // on supprime l'etat du tableau des points d'entrees car on vient de le traiter
+
+            copieGraphe.tabPointEntrees = copieGraphe.suppr(copieGraphe.tabPointEntrees, copieGraphe.tabPointEntrees[i]);
+            //copieGraphe.tabPointEntrees.erase(copieGraphe.tabPointEntrees.begin() + i);
+
         }
         copieGraphe.recherchePointsEntrees();
     }
@@ -1344,7 +1510,7 @@ void Graphe::calcDatePlusTard(float pourcentageDatePlusTard){
 
     int datePlusTardOmega = 0;
     for(unsigned int i=0; i<tabEtats.size(); i++){
-        if(datePlusTardOmega < tabEtats[i]->getDatePlusTot())
+        if(datePlusTardOmega <= tabEtats[i]->getDatePlusTot())
             datePlusTardOmega = tabEtats[i]->getDatePlusTot() * pourcentageDatePlusTard;
     }
 
@@ -1568,7 +1734,10 @@ void Graphe::niveau2(){
                     cout<< "Il y a un circuit dans le graphe"<<endl;
                 }
             }else{
-                cout<<"Il y a plusieurs points de sortie dans le graphe"<<endl;
+                if(tabPointSorties.size() > 1)
+                    cout<<"Il y a plusieurs points de sortie dans le graphe"<<endl;
+                else
+                    cout<<"Il n'y a pas de points de sortie dans le graphe"<<endl;
             }
         }else{
             cout<<"Il y a plusieurs points d'entree dans le graphe"<<endl;
@@ -1863,8 +2032,17 @@ void Graphe::niveau4(){
                 displayPointEntrees();
             }
         }
+        else if(tabPointEntrees.size() == 1){
+            cout<<"Creation d'un point d'entree alpha (nom: 0)"<<endl;
+            this->creerPointEntree();
+            displayEtatToMatriceAdjIncid();
+            displayPointEntrees();
+        }
 
         if(tabPointEntrees.size() == 1){
+
+
+
                 // verification un seul point de sortie
             recherchePointsSorties();
             displayPointSorties();
@@ -1886,6 +2064,12 @@ void Graphe::niveau4(){
                     cout<<endl;
                     cout<<endl;
                 }
+            }
+            else if(tabPointSorties.size() == 1){
+                cout<<"Creation d'un point de sortie omega (nom:" << this->nbSommet <<")"<<endl;
+                this->creerPointSortie();
+                displayEtatToMatriceAdjIncid();
+                displayPointSorties();
             }
 
             if(tabPointSorties.size() == 1){

@@ -13,12 +13,13 @@
 #include <limits>
 #include <cmath>
 #include <vector>
+#include <istream>
 
 
 #include "A10Etat.h"
 #include "A10log.h"
 
-#define DEBUG 1
+#define DEBUG 0
 
 class Graphe {
 
@@ -75,6 +76,10 @@ public:
 
     void recherchePointsSorties();
     void displayPointSorties();
+
+
+    std::vector<Etat*> suppr(std::vector<Etat*> tab, Etat* etat);
+    std::vector<int> suppr(std::vector<int> tab, int poids);
 
     void supprEtat(Etat* etat);
     int chercherPosEtatDansTab(Etat* etatSearch, std::vector<Etat*> tabDeRecherche);

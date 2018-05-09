@@ -89,6 +89,9 @@ Graphe::Graphe(Graphe* autreGraphe){
 
     this->remplirGraphe();
 
+    for(unsigned int i=0; i< tabEtats.size(); i++)
+        tabEtats[i]->setNom(tabEtats[i]->getNom() + 1);
+
 }
 
 
@@ -446,9 +449,9 @@ bool Graphe::remplirGrapheInteract(){
                 this->tabEtats[etatDebut]->ajoutSuccesseur(tabEtats[etatFin], this->matInc[etatDebut][etatFin]);
                 this->tabEtats[etatFin]->ajoutPredecesseur(tabEtats[etatDebut], this->matInc[etatFin][etatDebut]);
 
-cout<< "ICI" <<endl;
+
                 vector <Etat*> circuit = this->detectionCircuitInteract();
-cout<< "LA" <<endl;
+
                 #if DEBUG == 1
                     displayEtatToMatriceAdjIncid();
                 #endif // DEBUG
@@ -1157,13 +1160,12 @@ bool Graphe::detectionCircuit(){
 
 vector<Etat*> Graphe::detectionCircuitInteract(){
 
-    cout<< "ICI PEUT ETRE"<<endl;
     Graphe copieGraphe = this;
 
    // copieGraphe.copieGrapheInteract(*this);
 
 
-    cout<< "LA PEUT ETRE"<<endl;
+
 
 
 

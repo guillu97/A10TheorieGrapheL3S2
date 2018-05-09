@@ -3,13 +3,26 @@
 #include "A10Graphe.h"
 
 
+
+
+
+
 using namespace std;
+
+
+
 
 int main()
 {
+    Log();
+
     int niveau;
     bool toExit = true;
     string fileName;
+
+    #if LOG == 1
+        Log::write_to_log("Projet de Theorie des Graphes\n\n");
+    #endif // Log
 
     cout << "Projet de Theorie des Graphes" << endl << endl;
 

@@ -531,6 +531,7 @@ bool Graphe::remplirGrapheInteract(){
 }
 
 void Graphe::displayGraphe() {
+
     cout << endl;
     cout << "nb sommet: ";
     cout << this->nbSommet << endl;
@@ -1305,6 +1306,9 @@ void Graphe::affichageRangTab(){
 
 
 void Graphe::niveau1(){
+    #if LOG == 1
+    Log::write_to_log("Niveau1:\n\n");
+    #endif // LOG
 
     if(this->importe){
         displayGraphe();
@@ -1315,6 +1319,7 @@ void Graphe::niveau1(){
         cout<<endl;
         cout<<endl;
         this->displayEtatToMatriceAdjIncid();
+        cout<<"Entrez y pour continuer"<<endl;
         cin >> a;
         cout<<endl;
         cout<<endl;
@@ -1807,7 +1812,9 @@ void Graphe::affichageMarge(){
 
 void Graphe::niveau2(){
 
+    Log::write_to_log("Niveau2:\n\n");
     if(this->importe){
+
         displayGraphe();
 
 
@@ -2036,7 +2043,7 @@ void Graphe::creerPointSortie(){
 }
 
 void Graphe::niveau3(){
-
+            Log::write_to_log("Niveau3:\n\n");
     if(this->importe){
 
          cout<< "Apres import"<<endl;
@@ -2056,11 +2063,14 @@ void Graphe::niveau3(){
         // verification un seul point d'entree
         recherchePointsEntrees();
         displayPointEntrees();
-        if(tabPointEntrees.size() > 1){
+        if(tabPointEntrees.size() >= 1){
             cout<<"Creation d'un point d'entree alpha (nom: 0)"<<endl;
             this->creerPointEntree();
             displayEtatToMatriceAdjIncid();
             displayPointEntrees();
+        }
+        if(tabPointEntrees.size() < 1){
+            cout<<"Il n'y a pas de point d'entree"<<endl;
         }
 
 
@@ -2069,13 +2079,16 @@ void Graphe::niveau3(){
                 // verification un seul point de sortie
             recherchePointsSorties();
             displayPointSorties();
-            if(tabPointSorties.size() > 1){
+            if(tabPointSorties.size() >= 1){
                 cout<<"Creation d'un point de sortie omega (nom:" << this->nbSommet<<")"<<endl;
                 this->creerPointSortie();
                 displayEtatToMatriceAdjIncid();
                 displayPointSorties();
                 cout<<endl;
                 cout<<endl;
+            }
+            if(tabPointSorties.size() < 1){
+                cout<<"Il n'y a pas de point de sortie"<<endl;
             }
 
             if(tabPointSorties.size() == 1){
@@ -2143,7 +2156,7 @@ void Graphe::niveau3(){
 }
 
 void Graphe::niveau4(){
-
+            Log::write_to_log("Niveau4:\n\n");
     if(this->importe){
 
          cout<< "Apres import"<<endl;
